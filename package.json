@@ -1,5 +1,5 @@
 {
-    "name": "code-builder",
+    "name": "code-maker",
     "version": "1.0.0",
     "description": "根据模板自动生成代码",
     "main": "index.js",
@@ -8,7 +8,7 @@
         "build": "tsc"
     },
     "bin": {
-        "code-builder": "index.js"
+        "code-maker": "index.js"
     },
     "dependencies": {
         "ejs": "^3.1.6",
@@ -33,7 +33,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/shuli495/code-builder.git"
+        "url": "https://github.com/shuli495/code-maker.git"
     },
     "author": "shuli495 (https://github.com/shuli495)",
     "license": "MIT"
