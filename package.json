@@ -36,9 +36,6 @@
         "url": "https://github.com/shuli495/code-maker.git"
     },
     "homepage": "https://github.com/shuli495/code-maker#readme",
-    "publishConfig": {
-        "registry": "https://npm.pkg.github.com/shuli495"
-    },
     "author": "shuli495 (https://github.com/shuli495)",
     "license": "MIT"
 }
