@@ -14,7 +14,6 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
     - run: npm install
     - run: tsc
-    - uses: stepek/tsc-action@master
     - run: npm publish --access public
       env:
         NODE_AUTH_TOKEN: ${{ secrets.TOKEN_NPM }}
