@@ -31,6 +31,10 @@
         "sequelize",
         "code generation"
     ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/shuli495/code-file-builder.git"
+    },
     "homepage": "https://github.com/shuli495/code-file-builder",
     "author": "shuli495 <xiaoyao495@163.com> (https://github.com/shuli495)",
     "license": "MIT"
