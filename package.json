@@ -31,7 +31,7 @@
         "sequelize",
         "code generation"
     ],
-    "homepage": "https://github.com/shuli495/code-maker#readme",
-    "author": "shuli495 (https://github.com/shuli495)",
+    "homepage": "https://github.com/shuli495/code-file-builder",
+    "author": "shuli495 <xiaoyao495@163.com> (https://github.com/shuli495)",
     "license": "MIT"
 }

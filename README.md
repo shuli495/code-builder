@@ -1,4 +1,4 @@
-# code-maker
+# code-file-builder
 
 根据数据库表和模板，自动生成代码。
 
@@ -6,10 +6,10 @@
 
 ```
 // 全局安装
-npm install -g code-maker
+npm install -g code-file-builder
 
 // 生成db库中所有表的代码
-code-maker -h 127.0.0.1 -x pwd -d db
+code-file-builder -h 127.0.0.1 -x pwd -d db
 ```
 
 ## 其他参数

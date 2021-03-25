@@ -9,7 +9,7 @@ const { argv } = yargs
         'parse-numbers': false,
     })
     .usage(
-        'Usage: code-maker -h <host> -d <database> -u <user> -x [password] -p [port] -t [tableName] -m [template] -c [templateConfigPath] -n [params] -s [paramsFilePath] -r [saveFileRootPath]'
+        'Usage: code-file-builder -h <host> -d <database> -u <user> -x [password] -p [port] -t [tableName] -m [template] -c [templateConfigPath] -n [params] -s [paramsFilePath] -r [saveFileRootPath]'
     )
     .option('host', {
         description: 'IP/Hostname for the database.',
