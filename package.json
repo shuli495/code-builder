@@ -1,5 +1,5 @@
 {
-    "name": "code-maker",
+    "name": "code-file-builder",
     "version": "1.0.0",
     "description": "根据模板自动生成代码",
     "main": "index.js",
@@ -8,7 +8,7 @@
         "build": "tsc"
     },
     "bin": {
-        "code-maker": "index.js"
+        "code-file-builder": "index.js"
     },
     "dependencies": {
         "ejs": "^3.1.6",
