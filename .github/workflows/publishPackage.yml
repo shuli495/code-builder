@@ -11,8 +11,10 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         registry-url: 'https://npm.pkg.github.com'
+        scope: '@shuli495'
     - run: npm install
     - run: tsc
+    - run: cd lib & ls
     - run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.TOKEN_GITHUB }}
