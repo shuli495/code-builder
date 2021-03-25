@@ -1,4 +1,5 @@
-name: publish package
+# 发布到npm
+name: publish npm
 on:
   release:
     types: [created]
@@ -7,7 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    # 发布到npm
     - uses: actions/setup-node@v1
       with:
         node-version: '10.x'
@@ -17,13 +17,3 @@ jobs:
     - run: npm publish --access public
       env:
         NODE_AUTH_TOKEN: ${{ secrets.TOKEN_NPM }}
-    # 发布到github package
-    - uses: actions/setup-node@v1
-      with:
-        registry-url: 'https://npm.pkg.github.com'
-    - run: npm install
-    - run: tsc
-    - run: sed -i 's/:\ "code-file-builder/:\ "@shuli495\/code-file-builder/g' package.json
-    - run: npm publish
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.TOKEN_GITHUB }}
