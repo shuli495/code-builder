@@ -7,11 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    # 发布到github package
     - uses: actions/setup-node@v1
       with:
-        node-version: '10.x'
-        registry-url: 'https://registry.npmjs.org'
+        registry-url: 'https://npm.pkg.github.com'
     - run: npm install
-    - run: npm publish --access public
+    - run: tsc
+    - run: cat .npmrc
+    - run: sed -i 's/:\ "code-file-builder/:\ "@shuli495\/code-file-builder/g' package.json
+    - run: npm publish
       env:
-        NODE_AUTH_TOKEN: ${{ secrets.TOKEN_NPM }}
+        NODE_AUTH_TOKEN: ${{ secrets.TOKEN_GITHUB }}
