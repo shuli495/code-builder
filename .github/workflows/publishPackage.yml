@@ -15,7 +15,7 @@ jobs:
     - run: npm install
     - run: tsc
     - run: ls lib
-    - run: sed -i 's/: "code-file-builder/: "@shuli495\/code-file-builder/i' package.json
+    - run: sed -i 's/:\ "code-file-builder/:\ "@shuli\/code-file-builder/g' package.json
     - run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.TOKEN_GITHUB }}
