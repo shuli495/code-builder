@@ -1,5 +1,5 @@
-import { hump } from './reTableName';
-import { TableInfo, ColumnInfo } from './types';
+import { hump } from './transitionTableName.js';
+import { TableInfo, ColumnInfo } from './config.js';
 
 /**
  * 查询所有表
@@ -43,7 +43,57 @@ const getTableComment = async (connection: any, database: string, tableNames: Ar
 };
 
 /**
- * 查询表注释
+ * 转换数据类型
+ * @param columnType 列类型，包含长度
+ * @param dataType  数据类型
+ * @returns
+ */
+const getDataType = (columnType: string, dataType: string) => {
+    columnType = columnType.toLocaleLowerCase();
+    dataType = dataType.toLocaleLowerCase();
+
+    let javaDataType = dataType;
+    if (columnType === 'tinyint(1)') {
+        javaDataType = 'Boolean';
+    } else if (dataType === 'varchar' || dataType === 'char' || dataType === 'text') {
+        javaDataType = 'String';
+    } else if (dataType === 'varchar' || dataType === 'char' || dataType === 'text') {
+        javaDataType = 'String';
+    } else if (dataType === 'bigint') {
+        javaDataType = 'Long';
+    } else if (
+        dataType === 'integer' ||
+        dataType === 'int' ||
+        dataType === 'tinyint' ||
+        dataType === 'smallint' ||
+        dataType === 'bit'
+    ) {
+        javaDataType = 'Integer';
+    } else if (dataType === 'float') {
+        javaDataType = 'Float';
+    } else if (dataType === 'double') {
+        javaDataType = 'Double';
+    } else if (dataType === 'numeric' || dataType === 'bigDecimal') {
+        javaDataType = 'BigDecimal';
+    } else if (dataType === 'tate') {
+        javaDataType = 'Date';
+    } else if (dataType === 'time') {
+        javaDataType = 'Time';
+    } else if (dataType === 'timestamp') {
+        javaDataType = 'Timestamp';
+    } else if (dataType === 'blob' || dataType === 'varbinary') {
+        javaDataType = 'byte[]';
+    } else if (dataType === 'json') {
+        javaDataType = 'JSON';
+    }
+
+    return {
+        javaDataType,
+    };
+};
+
+/**
+ * 查询列
  * @param {connection} connection mysql链接
  * @param {string} database 库
  * @param {string} tableName 表明
@@ -62,14 +112,19 @@ const getTableColumn = async (connection: any, database: string, tableNames: Arr
                 ORDER BY ORDINAL_POSITION`;
 
     const result = await connection.query(sql, [database, tableNames]);
+
     const rows: Array<ColumnInfo> = result[0].map((item: any) => {
+        const { columnType, dataType, columnName, columnKey, extra, isNullable } = item;
+        const languageDataType = getDataType(columnType, dataType);
+
         return {
             ...item,
-            columnHumpName: hump(item.columnName),
-            primaryKey: item.columnKey === 'PRI', // 主键
-            autoIncrement: item.extra === 'auto_increment', // 自增
-            dataType: item.dataType.toString().toUpperCase(),
-            isNullable: item.isNullable === 'YES',
+            ...languageDataType,
+            columnHumpName: hump(columnName),
+            primaryKey: columnKey === 'PRI', // 主键
+            autoIncrement: extra === 'auto_increment', // 自增
+            dataType: dataType.toString().toUpperCase(),
+            isNullable: isNullable === 'YES',
         };
     });
     return rows;

@@ -1,0 +1,19 @@
+package <%= javaPackage %>.service.impl;
+
+import com.pighand.framework.base.BaseServiceImpl;
+import <%= javaPackage %>.domain.<%= tableFileName %>Domain;
+import <%= javaPackage %>.mapper.<%= tableFileName %>Mapper;
+import <%= javaPackage %>.service.<%= tableFileName %>Service;
+import <%= javaPackage %>.vo.<%= tableFileName %>VO;
+import org.springframework.stereotype.Service;
+
+/**
+ * <%= tableComment %>
+ *
+ * @author <%= author %>
+ * @createDate <%= dateTime %>
+ */
+@Service
+public class <%= tableFileName %>ServiceImpl extends BaseServiceImpl<<%= tableFileName %>Mapper, <%= tableFileName %>Domain>
+        implements <%= tableFileName %>Service{
+}
