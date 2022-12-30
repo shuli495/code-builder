@@ -1,19 +1,40 @@
-# 发布到npm
-name: publish npm
+# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
+# For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
+
+name: publish to npm
+
+# on:
+#   release:
+#     types: [created]
 on:
-  release:
-    types: [created]
+  workflow_dispatch:
+
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
-      with:
-        node-version: '10.x'
-        registry-url: 'https://registry.npmjs.org'
-    - run: npm install
-    - run: tsc
-    - run: npm publish --access public
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.TOKEN_NPM }}
+      - name: checkout
+        uses: actions/checkout@v3
+        
+      - name: install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+      
+      - name: install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
+          run_install: true
+    
+      - name: install packages
+        run: pnpm install
+        
+      - name: build
+        run: pnpm build
+        
+      - name: publish
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
