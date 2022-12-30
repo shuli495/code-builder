@@ -5,8 +5,8 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import ora from 'ora';
 import chalk from 'chalk';
-import Auto from './Auto.js';
-import { cmdConfig, optionsNameType, inquirerQuestionsSchema, inquirerQuestions, language } from './common/config.js';
+import Auto from './auto.mjs';
+import { cmdConfig, optionsNameType, inquirerQuestionsSchema, inquirerQuestions, language } from './common/config.mjs';
 
 const argv = await yargs(hideBin(process.argv))
     .usage('eg: code-file-builder -h 127.0.0.1 -d test -x 123456 -m pighand-spring')
