@@ -7,34 +7,31 @@ name: publish to npm
 #   release:
 #     types: [created]
 on:
-  workflow_dispatch:
+    workflow_dispatch:
 
 jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-        
-      - name: install node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          registry-url: https://registry.npmjs.org/
-      
-      - name: install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 7
-          run_install: true
-    
-      - name: install packages
-        run: pnpm install
-        
-      - name: build
-        run: tsc
-        
-      - name: publish
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+    publish:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout
+              uses: actions/checkout@v3
+
+            - name: install node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+                  registry-url: https://registry.npmjs.org/
+
+            - name: install pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: 7
+                  run_install: true
+
+            - name: build
+              run: pnpm build
+
+            - name: publish
+              run: npm publish --access public
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
