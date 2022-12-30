@@ -127,7 +127,7 @@ export const cmdConfig = {
             en: '🎯Names of tables to import. Multiple use `space` separate. If there is no value, export all tables.',
         },
         description: {
-            zh: '表名。多个表用”空格“分开，不填生成说有表。例如：--tableName user role',
+            zh: '表名。多个表用”空格“分开，不填生成所有表。例如：--tableName user role',
             en: 'Names of tables to import. Multiple use `space` separate. If there is no value, export all tables. eg: --tableName user role',
         },
     },
