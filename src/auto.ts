@@ -34,7 +34,7 @@ class Auto {
 
         // 根据java关键字，处理默认java package
         const paths = path.resolve(saveFileRootPath).split(path.sep);
-        const javaPathIndex = paths.indexOf('java');
+        const javaPathIndex = paths.indexOf('java') + 1;
         const javaPackage = paths.slice(javaPathIndex).join('.');
 
         // 处理自定义参数
