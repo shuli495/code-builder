@@ -4,6 +4,10 @@
     "description": "根据模板自动生成代码",
     "exports": "./index.js",
     "type": "module",
+    "files": [
+        "lib",
+        "index.js"
+    ],
     "scripts": {
         "build": "tsc && cp -af src/template/ejs lib/template/",
         "buildW": "tsc && xcopy src\\template\\ejs\\* lib\\template\\ejs /y /e /i /q"
