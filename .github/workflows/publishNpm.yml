@@ -32,7 +32,7 @@ jobs:
         run: pnpm install
         
       - name: build
-        run: pnpm build
+        run: tsc
         
       - name: publish
         run: npm publish --access public
