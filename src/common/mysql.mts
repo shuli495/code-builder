@@ -1,5 +1,5 @@
-import { hump } from './transitionTableName.js';
-import { TableInfo, ColumnInfo } from './config.js';
+import { hump } from './transitionTableName.mjs';
+import { TableInfo, ColumnInfo } from './config.mjs';
 
 /**
  * 查询所有表

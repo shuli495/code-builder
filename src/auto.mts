@@ -6,9 +6,9 @@ import chalk from 'chalk';
 import ora, { Ora } from 'ora';
 import moment from 'moment';
 import { fileURLToPath } from 'url';
-import { hump, file } from './common/transitionTableName.js';
-import { config as templatePighandSpring } from './template/config/pighand-spring.js';
-import { getTableComment, getTableColumn, getAllTables } from './common/mysql.js';
+import { hump, file } from './common/transitionTableName.mjs';
+import { config as templatePighandSpring } from './template/config/pighand-spring.mjs';
+import { getTableComment, getTableColumn, getAllTables } from './common/mysql.mjs';
 import {
     Options,
     Config,
@@ -17,7 +17,7 @@ import {
     templateParams,
     templateType,
     templateConfig,
-} from './common/config.js';
+} from './common/config.mjs';
 
 class Auto {
     config: Config;

@@ -1,4 +1,4 @@
-import { templateConfig } from '../../common/config.js';
+import { templateConfig } from '../../common/config.mjs';
 
 const config: Array<templateConfig> = [
     {
