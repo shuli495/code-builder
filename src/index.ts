@@ -5,7 +5,7 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import ora from 'ora';
 import chalk from 'chalk';
-import Auto from './Auto.ts';
+import Auto from './Auto.js';
 import { cmdConfig, optionsNameType, inquirerQuestionsSchema, inquirerQuestions, language } from './common/config.js';
 
 const argv = await yargs(hideBin(process.argv))
