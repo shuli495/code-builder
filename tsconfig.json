@@ -2,14 +2,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "lib",
+    "target": "ES2022",
     "module": "Node16",
-    "target": "ES2020",
     "moduleResolution": "Node16",
-    "allowJs": true,
-    "sourceMap": true,
-    "noImplicitAny": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "tmp"]
