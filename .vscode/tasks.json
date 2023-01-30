@@ -9,6 +9,7 @@
             "problemMatcher": ["$tsc"]
         },
         {
+            "label": "watch",
             "type": "typescript",
             "tsconfig": "tsconfig.json",
             "option": "watch",
