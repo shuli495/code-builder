@@ -374,7 +374,7 @@ export interface Options {
     database: string;
 
     /** 生产表名 */
-    tableName?: string;
+    tableName?: [string];
 
     /** 内置模板名 */
     template?: templateType;

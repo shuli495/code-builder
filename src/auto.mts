@@ -30,7 +30,7 @@ class Auto {
 
         // 过滤空表名
         const tableNamesFormat =
-            (tableName && Array.from(new Set(tableName.split(' ').filter((item) => !!item.trim())))) || [];
+            (tableName && Array.from(new Set(tableName.filter((item) => !!item.trim())))) || [];
 
         // 根据java关键字，处理默认java package
         const paths = path.resolve(saveFileRootPath).split(path.sep);
