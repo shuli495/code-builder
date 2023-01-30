@@ -1,10 +1,12 @@
 package <%= javaPackage %>.service.impl;
 
-import com.pighand.framework.base.BaseServiceImpl;
 import <%= javaPackage %>.domain.<%= tableFileName %>Domain;
 import <%= javaPackage %>.mapper.<%= tableFileName %>Mapper;
 import <%= javaPackage %>.service.<%= tableFileName %>Service;
 import <%= javaPackage %>.vo.<%= tableFileName %>VO;
+import com.pighand.framework.spring.base.BaseServiceImpl;
+import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.page.PageType;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,4 +18,60 @@ import org.springframework.stereotype.Service;
 @Service
 public class <%= tableFileName %>ServiceImpl extends BaseServiceImpl<<%= tableFileName %>Mapper, <%= tableFileName %>Domain>
         implements <%= tableFileName %>Service{
+
+   /**
+    * 创建
+    *
+    * @param <%= tableHumpName %>VO
+    * @return
+    */
+   @Override
+   public <%= tableFileName %>VO create(<%= tableFileName %>VO <%= tableHumpName %>VO) {
+        super.mapper.insert(<%= tableHumpName %>VO);
+
+        return <%= tableHumpName %>VO;
+   }
+
+   /**
+    * 详情
+    *
+    * @param id
+    * @return
+    */
+   @Override
+   public <%= tableFileName %>Domain find(Long id) {
+        <%= tableFileName %>Domain <%= tableHumpName %>Domain = super.mapper.selectById(id);
+        return <%= tableHumpName %>Domain;
+   }
+
+   /**
+    * 分页或列表
+    *
+    * @param <%= tableHumpName %>VO
+    */
+   @Override
+   public PageOrList<<%= tableFileName %>VO> query(<%= tableFileName %>VO <%= tableHumpName %>VO) {
+        PageOrList pageInfo = <%= tableHumpName %>VO.pageParamOrInit(PageType.NEXT_TOKEN);
+        return super.mapper.query(pageInfo, <%= tableHumpName %>VO);
+   }
+
+   /**
+    * 修改
+    *
+    * @param <%= tableHumpName %>VO
+    */
+   @Override
+   public void update(<%= tableFileName %>VO <%= tableHumpName %>VO) {
+        super.mapper.updateById(<%= tableHumpName %>VO);
+   }
+
+   /**
+    * 删除
+    *
+    * @param id
+    */
+   @Override
+   public void delete(Long id) {
+        super.mapper.deleteById(id);
+   }
 }

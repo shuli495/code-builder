@@ -1,8 +1,17 @@
 package <%= javaPackage %>.controller;
 
-import com.pighand.framework.annotation.RestController;
-import com.pighand.framework.base.BaseController;
+import com.pighand.framework.spring.api.annotation.*;
+import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
+import com.pighand.framework.spring.base.BaseController;
+import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.response.Result;
+import com.pighand.notify.domain.<%= tableFileName %>Domain;
 import <%= javaPackage %>.service.<%= tableFileName %>Service;
+import com.pighand.notify.vo.<%= tableFileName %>VO;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 /**
  * <%= tableComment %>
@@ -12,4 +21,57 @@ import <%= javaPackage %>.service.<%= tableFileName %>Service;
  */
 @RestController(path = "<%= tableHumpName %>", docName = "<%= tableComment %>")
 public class <%= tableFileName %>Controller extends BaseController<<%= tableFileName %>Service> {
+
+    /**
+     * @param <%= tableHumpName %>VO
+     * @return
+     */
+    @Post(docDescription = "创建", fieldGroup = "<%= tableHumpName %>Create")
+    public Result<<%= tableFileName %>VO> create(
+        @Validated({ValidationGroup.Create.class}) @RequestBody <%= tableFileName %>VO <%= tableHumpName %>VO) {
+        <%= tableHumpName %>VO = super.service.create(<%= tableHumpName %>VO);
+
+        return new Result(<%= tableHumpName %>VO);
+    }
+
+    /**
+     * @param id
+     * @return
+     */
+    @Get(path = "/{id}", docDescription = "详情")
+    public Result<<%= tableFileName %>Domain> find(@PathVariable Long id) {
+        <%= tableFileName %>Domain <%= tableHumpName %>Domain = super.service.find(id);
+
+        return new Result(<%= tableHumpName %>Domain);
+    }
+
+    /**
+     * @param <%= tableHumpName %>VO
+     */
+    @Get(docDescription = "分页或列表")
+    public Result<PageOrList<<%= tableFileName %>VO>> query(<%= tableFileName %>VO <%= tableHumpName %>VO) {
+        PageOrList<<%= tableFileName %>VO> result = super.service.query(<%= tableHumpName %>VO);
+
+        return new Result(result);
+    }
+
+    /**
+     * @param <%= tableHumpName %>VO
+     */
+    @Put(path = "{id}", docDescription = "修改")
+    public Result update(@PathVariable Long id, @RequestBody <%= tableFileName %>VO <%= tableHumpName %>VO) {
+        <%= tableHumpName %>VO.setId(id);
+        super.service.update(<%= tableHumpName %>VO);
+
+        return new Result();
+    }
+
+    /**
+     * @param id
+     */
+    @Delete(path = "{id}", docDescription = "修改")
+    public Result delete(@PathVariable Long id) {
+        super.service.delete(id);
+        return new Result();
+    }
 }
