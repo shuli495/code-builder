@@ -69,25 +69,29 @@ code-file-builder guide
 
 内置参数（可直接在 ejs 模板中使用）：
 
-| 参数                           | 数据类型 | 可用 params、paramsPath 替换 | 说明                                                 |
-| ------------------------------ | -------- | ---------------------------- | ---------------------------------------------------- |
-| dateTime                       | string   | Y                            | 当前时间，格式：YYYY-MM-DD HH:mm:ss                  |
-| author                         | string   | Y                            | 作者信息，默认系统用户名                             |
-| javaPackage                    | string   | Y                            | java 项目 package 路径，默认根据生成路径识别         |
-| tableName                      | string   | N                            | 数据库表名                                           |
-| tableFileName                  | string   | N                            | 表名对应的文件名，即首字母大写的表名                 |
-| tableHumpName                  | string   | N                            | 驼峰格式的表名                                       |
-| tableComment                   | string   | N                            | 表备注                                               |
-| columns                        | array    | N                            | 列信息                                               |
-| columns.columnName             | string   | N                            | 列名                                                 |
-| columns.columnHumpName         | string   | N                            | 驼峰格式列名                                         |
-| columns.dataType               | string   | N                            | 数据类型，与 mysql 数据类型一致，INTEGER、VARCHAR 等 |
-| columns.columnType             | string   | N                            | 列完整类型，varchar(32)等                            |
-| columns.characterMaximumLength | number   | N                            | 最大长度                                             |
-| columns.isNullable             | boolean  | N                            | 是否允许 null                                        |
-| columns.primaryKey             | boolean  | N                            | 是否是主键                                           |
-| columns.autoIncrement          | boolean  | N                            | 是否自增                                             |
-| columns.columnComment          | string   | N                            | 列备注                                               |
+| 参数                           | 数据类型 | 可用 params、paramsPath 替换 | 说明                                                  |
+| ------------------------------ | -------- | ---------------------------- | ----------------------------------------------------- |
+| dateTime                       | string   | Y                            | 当前时间，格式：YYYY-MM-DD HH:mm:ss                   |
+| author                         | string   | Y                            | 作者信息，默认系统用户名                              |
+| javaPackage                    | string   | Y                            | java 项目 package 路径，默认根据生成路径识别          |
+| tableName                      | string   | N                            | 数据库表名                                            |
+| tableFileName                  | string   | N                            | 表名对应的文件名，即首字母大写的表名                  |
+| tableHumpName                  | string   | N                            | 驼峰格式的表名                                        |
+| tableComment                   | string   | N                            | 表备注                                                |
+| columns                        | array    | N                            | 列信息                                                |
+| columns.columnName             | string   | N                            | 列名                                                  |
+| columns.columnHumpName         | string   | N                            | 驼峰格式列名                                          |
+| columns.dataType               | string   | N                            | 数据类型，与 mysql 数据类型一致，INTEGER、VARCHAR 等  |
+| columns.javaDataType           | string   | N                            | java 数据类型,String、Long、BigDecimal、Date、JSON 等 |
+| columns.isString               | boolean  | N                            | 是否是字符串                                          |
+| columns.isNumber               | boolean  | N                            | 是否是数字                                            |
+| columns.columnType             | string   | N                            | 列完整类型，varchar(32)等                             |
+| columns.characterMaximumLength | number   | N                            | 最大长度                                              |
+| columns.isNullable             | boolean  | N                            | 是否允许 null                                         |
+| columns.primaryKey             | boolean  | N                            | 是否是主键                                            |
+| columns.autoIncrement          | boolean  | N                            | 是否自增                                              |
+| columns.columnComment          | string   | N                            | 列备注                                                |
+| columns.isReservedWords        | boolean  | N                            | 是否是 mysql 保留字                                   |
 
 <br/>
 如需其他参数，可使用--params、--paramsPath添加自定义参数
