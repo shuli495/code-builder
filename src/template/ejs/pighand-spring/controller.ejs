@@ -26,7 +26,7 @@ public class <%= tableFileName %>Controller extends BaseController<<%= tableFile
      * @param <%= tableHumpName %>VO
      * @return
      */
-    @Post(docDescription = "创建", fieldGroup = "<%= tableHumpName %>Create")
+    @Post(docSummary = "创建", fieldGroup = "<%= tableHumpName %>Create")
     public Result<<%= tableFileName %>VO> create(
         @Validated({ValidationGroup.Create.class}) @RequestBody <%= tableFileName %>VO <%= tableHumpName %>VO) {
         <%= tableHumpName %>VO = super.service.create(<%= tableHumpName %>VO);
@@ -38,7 +38,7 @@ public class <%= tableFileName %>Controller extends BaseController<<%= tableFile
      * @param id
      * @return
      */
-    @Get(path = "/{id}", docDescription = "详情")
+    @Get(path = "/{id}", docSummary = "详情")
     public Result<<%= tableFileName %>Domain> find(@PathVariable Long id) {
         <%= tableFileName %>Domain <%= tableHumpName %>Domain = super.service.find(id);
 
@@ -48,7 +48,7 @@ public class <%= tableFileName %>Controller extends BaseController<<%= tableFile
     /**
      * @param <%= tableHumpName %>VO
      */
-    @Get(docDescription = "分页或列表")
+    @Get(docSummary = "分页或列表")
     public Result<PageOrList<<%= tableFileName %>VO>> query(<%= tableFileName %>VO <%= tableHumpName %>VO) {
         PageOrList<<%= tableFileName %>VO> result = super.service.query(<%= tableHumpName %>VO);
 
@@ -58,7 +58,7 @@ public class <%= tableFileName %>Controller extends BaseController<<%= tableFile
     /**
      * @param <%= tableHumpName %>VO
      */
-    @Put(path = "{id}", docDescription = "修改")
+    @Put(path = "{id}", docSummary = "修改")
     public Result update(@PathVariable Long id, @RequestBody <%= tableFileName %>VO <%= tableHumpName %>VO) {
         <%= tableHumpName %>VO.setId(id);
         super.service.update(<%= tableHumpName %>VO);
@@ -69,7 +69,7 @@ public class <%= tableFileName %>Controller extends BaseController<<%= tableFile
     /**
      * @param id
      */
-    @Delete(path = "{id}", docDescription = "修改")
+    @Delete(path = "{id}", docSummary = "删除")
     public Result delete(@PathVariable Long id) {
         super.service.delete(id);
         return new Result();
