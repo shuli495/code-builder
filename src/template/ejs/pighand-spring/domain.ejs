@@ -8,6 +8,7 @@ import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.field.ResponseField;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.base.BaseDomain;
+<%= columns.filter(item => item.javaDataType == 'JSON').length > 0 ? "import com.pighand.framework.spring.api.springdoc.dataType.EmptyObject;" : "" %>
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -32,21 +33,16 @@ public class <%= tableFileName %>Domain extends BaseDomain implements Serializab
     <%_ } -%>
     <%_ if (column.primaryKey) { -%>
     @TableId
-    <%_ } -%>
-    <%_ if (!column.isNullable) { -%>
+    @RequestFieldException("<%= tableHumpName %>Create")
+    @RequestFieldException("<%= tableHumpName %>Update")
+    <%_ } else if (!column.isNullable) { -%>
     @NotNull(groups = {ValidationGroup.Create.class})
     <%_ } -%>
     <%_ if (column.isString) { -%>
     @Length(max = <%= column.characterMaximumLength %>)
     <%_ } -%>
     <%_ if (column.columnComment) { -%>
-    @Schema(description = "<%= column.columnComment %>")
-    <%_ } -%>
-    <%_ if (column.primaryKey) { -%>
-    @RequestFieldException("<%= tableHumpName %>Create")
-    @ResponseField(value = "<%= tableHumpName %>Create", required = true)
-    <%_ } else { -%>
-    @Field(value = "configEmailCreate", required = <%= !column.isNullable %>)
+    @Schema(description = "<%= column.columnComment %>"<%= column.javaDataType == 'JSON' ? ", implementation = EmptyObject.class" : "" %>)
     <%_ } -%>
     private <%= column.javaDataType %> <%= column.columnHumpName %>;
 

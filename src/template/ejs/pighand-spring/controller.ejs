@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author <%= author %>
  * @createDate <%= dateTime %>
  */
-@RestController(path = "<%= tableHumpName %>", docName = "<%= tableComment %>")
+@RestController(path = "<%= tableName.replace('_', '/') %>", docName = "<%= tableComment %>")
 public class <%= tableFileName %>Controller extends BaseController<<%= tableFileName %>Service> {
 
     /**
@@ -38,8 +38,8 @@ public class <%= tableFileName %>Controller extends BaseController<<%= tableFile
      * @param id
      * @return
      */
-    @Get(path = "/{id}", docSummary = "详情")
-    public Result<<%= tableFileName %>Domain> find(@PathVariable Long id) {
+    @Get(path = "{id}", docSummary = "详情")
+    public Result<<%= tableFileName %>Domain> find(@PathVariable(name = "id") Long id) {
         <%= tableFileName %>Domain <%= tableHumpName %>Domain = super.service.find(id);
 
         return new Result(<%= tableHumpName %>Domain);
@@ -48,7 +48,7 @@ public class <%= tableFileName %>Controller extends BaseController<<%= tableFile
     /**
      * @param <%= tableHumpName %>VO
      */
-    @Get(docSummary = "分页或列表")
+    @Get(docSummary = "分页或列表", fieldGroup = "<%= tableHumpName %>Query")
     public Result<PageOrList<<%= tableFileName %>VO>> query(<%= tableFileName %>VO <%= tableHumpName %>VO) {
         PageOrList<<%= tableFileName %>VO> result = super.service.query(<%= tableHumpName %>VO);
 
@@ -58,8 +58,8 @@ public class <%= tableFileName %>Controller extends BaseController<<%= tableFile
     /**
      * @param <%= tableHumpName %>VO
      */
-    @Put(path = "{id}", docSummary = "修改")
-    public Result update(@PathVariable Long id, @RequestBody <%= tableFileName %>VO <%= tableHumpName %>VO) {
+    @Put(path = "{id}", docSummary = "修改", fieldGroup = "<%= tableHumpName %>Update")
+    public Result update(@PathVariable(name = "id") Long id, @RequestBody <%= tableFileName %>VO <%= tableHumpName %>VO) {
         <%= tableHumpName %>VO.setId(id);
         super.service.update(<%= tableHumpName %>VO);
 
@@ -70,7 +70,7 @@ public class <%= tableFileName %>Controller extends BaseController<<%= tableFile
      * @param id
      */
     @Delete(path = "{id}", docSummary = "删除")
-    public Result delete(@PathVariable Long id) {
+    public Result delete(@PathVariable(name = "id") Long id) {
         super.service.delete(id);
         return new Result();
     }
