@@ -95,3 +95,22 @@ code-file-builder guide
 
 <br/>
 如需其他参数，可使用--params、--paramsPath添加自定义参数
+
+## 历史记录
+
+-   查看历史记录，按回车再次执行；
+-   最多记录 100 执行成功的历史记录
+
+```
+code-file-builder history
+```
+
+历史记录文件保存路径:
+
+**windows:**
+
+> C:\Users\username\.code_file_builder_history
+
+**mac or linux:**
+
+> ~/.code_file_builder_history

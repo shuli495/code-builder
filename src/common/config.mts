@@ -1,4 +1,21 @@
+import os from 'os';
+import path from 'path';
 import { osLocaleSync } from 'os-locale';
+
+export const projectName = 'code_file_builder';
+
+/**
+ * 历史记录内容格式
+ */
+export interface historyInterface {
+    time: string;
+    cmd: string;
+}
+
+/**
+ * 历史记录文件路径
+ */
+export const historyFile = path.join(os.homedir(), `.${projectName}_history`);
 
 export const language = osLocaleSync().split('-')[0].toLocaleLowerCase() === 'zh' ? 'zh' : 'en';
 
@@ -209,6 +226,10 @@ export const cmdConfig = {
             zh: '按步骤提示生成',
             en: 'build by guide',
         },
+        history: {
+            zh: '历史记录',
+            en: 'history list',
+        },
     },
     group: {
         db: {
@@ -248,21 +269,25 @@ export const cmdConfig = {
 
 /**
  * 命令行步骤格式
+ *
+ * @see https://www.npmjs.com/package/inquirer
  */
-export interface inquirerQuestionsSchema {
+export interface inquirerSchema {
     type: string;
     message: string;
     name: string;
     default?: any;
     validate?: any;
     choices?: Array<any>;
-    children?: [{ parent?: Array<any>; questions?: Array<inquirerQuestionsSchema> }];
+    children?: [{ parent?: Array<any>; questions?: Array<inquirerSchema> }];
+
+    noHistoryConsole?: string;
 }
 
 /**
- * 命令行步骤选项
+ * 内置指令 - 步骤选项
  */
-export const inquirerQuestions: Array<inquirerQuestionsSchema> = [
+export const inquirerGuide: Array<inquirerSchema> = [
     {
         type: 'list',
         message: cmdConfig.type.guideMessage[language],
@@ -348,6 +373,25 @@ export const inquirerQuestions: Array<inquirerQuestionsSchema> = [
         message: cmdConfig.saveFileRootPath.guideMessage[language],
         name: cmdConfig.saveFileRootPath.name,
         default: cmdConfig.saveFileRootPath.default,
+    },
+];
+
+/**
+ * 内置指令 - 历史记录
+ */
+export const inquirerHistory: Array<inquirerSchema> = [
+    {
+        type: 'list',
+        message: {
+            zh: '🗓️  请选择要操作的记录：',
+            en: '🗓️  Select the record:',
+        }[language],
+        name: 'history',
+        default: 0,
+        noHistoryConsole: {
+            zh: '无历史记录',
+            en: 'no history',
+        }[language],
     },
 ];
 
