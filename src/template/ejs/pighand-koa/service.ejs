@@ -1,0 +1,62 @@
+import { BaseService } from '@pighand/pighand-framework-koa';
+import <%= tableFileName %>Model from '../model/<%= tableFileName %>Model';
+
+/**
+ * <%= tableComment %>
+ *
+ * @author <%= author %>
+ * @createDate <%= dateTime %>
+ */
+class <%= tableFileName %>Service extends BaseService(<%= tableFileName %>Model) {
+
+    /**
+     * 创建
+     *
+     * @return
+     */
+    async create(params: any) {
+        return await this.db.create(params);
+    }
+
+    /**
+     * 详情
+     *
+     * @param id
+     * @return
+     */
+    async find(id: number) {
+        return await this.db.find(id);
+    }
+
+    /**
+     * 分页或列表
+     */
+    async query(params: any) {
+        const result = await this.db.query(params, params);
+
+        return result;
+    }
+
+    /**
+     * 修改
+     */
+    async update(id: number, params: any) {
+        await this.db.update(
+            {
+                id
+            },
+            params
+        );
+    }
+
+    /**
+     * 删除
+     *
+     * @param id
+     */
+    async delete(id: number) {
+        await this.db.physicsDelete(id);
+    }
+}
+
+export default new <%= tableFileName %>Service();

@@ -1,0 +1,26 @@
+import { Table, Column, Model, DataType } from 'sequelize-typescript';
+
+/**
+ * <%= tableComment %>
+ *
+ * @author <%= author %>
+ * @createDate <%= dateTime %>
+ */
+@Table({
+    tableName: '<%= tableName %>',
+})
+class <%= tableFileName %>Model extends Model {
+<%_
+    columns.forEach((column) => {
+-%>
+
+    @Column({
+        field: '<%= column.columnName %>',
+        type: DataType.<%= column.sequelizeType %>,
+        comment: '<%= column.columnComment %>',
+    })
+    declare <%= column.columnHumpName %>: <%= column.jsDataType %>;
+<%_ }); -%>
+}
+
+export default <%= tableFileName %>Model;

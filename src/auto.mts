@@ -8,6 +8,7 @@ import moment from 'moment';
 import { fileURLToPath } from 'url';
 import { hump, file } from './common/transitionTableName.mjs';
 import { config as templatePighandSpring } from './template/config/pighand-spring.mjs';
+import { config as templatePighandKoa } from './template/config/pighand-koa.mjs';
 import { getTableComment, getTableColumn, getAllTables } from './common/mysql.mjs';
 import {
     Options,
@@ -29,8 +30,7 @@ class Auto {
         const { tableName, params, paramsPath, saveFileRootPath } = options;
 
         // 过滤空表名
-        const tableNamesFormat =
-            (tableName && Array.from(new Set(tableName.filter((item) => !!item.trim())))) || [];
+        const tableNamesFormat = (tableName && Array.from(new Set(tableName.filter((item) => !!item.trim())))) || [];
 
         // 根据java关键字，处理默认java package
         const paths = path.resolve(saveFileRootPath).split(path.sep);
@@ -179,6 +179,9 @@ class Auto {
             switch (template) {
                 case templateType.pighandSpring:
                     templateConfig = templatePighandSpring;
+                    break;
+                case templateType.pighandKoa:
+                    templateConfig = templatePighandKoa;
                     break;
             }
         }

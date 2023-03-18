@@ -1,0 +1,85 @@
+import { Context } from 'koa';
+import {
+    BaseController,
+    Controller,
+    Post,
+    Get,
+    Put,
+    Delete,
+    checkJWT,
+} from '@pighand/pighand-framework-koa';
+
+import <%= tableFileName %>Service from '../service/<%= tableFileName %>Service';
+
+/**
+ * <%= tableComment %>
+ *
+ * @author <%= author %>
+ * @createDate <%= dateTime %>
+ */
+@Controller('<%= tableHumpName %>', [checkJWT()])
+class <%= tableFileName %>Controller extends BaseController(<%= tableFileName %>Service) {
+
+    /**
+     * 创建
+     */
+    @Post()
+    async create(ctx: Context) {
+        const params = ctx.request.body;
+        const result = await <%= tableFileName %>Service.create(params);
+
+        return super.result(ctx, result);
+    }
+
+    /**
+     * 详情
+     */
+    @Get(':id')
+    async find(ctx: Context) {
+        const { id } = ctx.params;
+
+        const result = await <%= tableFileName %>Service.find(id);
+
+        return super.result(ctx, result);
+    }
+
+    /**
+     * 分页或列表
+     */
+    @Get()
+    async query(ctx: Context) {
+        const params = ctx.query;
+        const result = await <%= tableFileName %>Service.query(params);
+
+        return super.result(ctx, result);
+    }
+
+    /**
+     * 修改
+     */
+    @Put(':id')
+    async update(ctx: Context) {
+        const { id } = ctx.params;
+        const params = ctx.request.body;
+
+        await <%= tableFileName %>Service.update(id, params);
+
+        return super.result(ctx);
+    }
+
+    /**
+     * 删除
+     *
+     * @param id
+     */
+    @Delete(':id')
+    async delete(ctx: Context) {
+        const { id } = ctx.params;
+
+        await <%= tableFileName %>Service.delete(id);
+
+        return super.result(ctx);
+    }
+}
+
+export default <%= tableFileName %>Controller;

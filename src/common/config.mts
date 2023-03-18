@@ -28,7 +28,7 @@ export enum optionsType {
 }
 
 /**
- * 模板类型
+ * 内置模板类型
  */
 export enum templateType {
     pighandSpring = 'pighand-spring',

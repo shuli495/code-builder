@@ -56,16 +56,20 @@ const getDataType = (columnType: string, dataType: string) => {
     let isNumber = false;
 
     let javaDataType = dataType;
+    let jsDataType = dataType;
+    let sequelizeType = dataType.toLocaleUpperCase();
+
     if (columnType === 'tinyint(1)') {
         javaDataType = 'Boolean';
+        jsDataType = 'boolean';
     } else if (dataType === 'varchar' || dataType === 'char' || dataType === 'text') {
         javaDataType = 'String';
-        isString = true;
-    } else if (dataType === 'varchar' || dataType === 'char' || dataType === 'text') {
-        javaDataType = 'String';
+        jsDataType = 'string';
+        sequelizeType = 'STRING';
         isString = true;
     } else if (dataType === 'bigint') {
         javaDataType = 'Long';
+        jsDataType = 'number';
         isNumber = true;
     } else if (
         dataType === 'integer' ||
@@ -75,30 +79,47 @@ const getDataType = (columnType: string, dataType: string) => {
         dataType === 'bit'
     ) {
         javaDataType = 'Integer';
+        jsDataType = 'number';
         isNumber = true;
     } else if (dataType === 'float') {
         javaDataType = 'Float';
+        jsDataType = 'number';
         isNumber = true;
     } else if (dataType === 'double') {
         javaDataType = 'Double';
+        jsDataType = 'number';
         isNumber = true;
     } else if (dataType === 'numeric' || dataType === 'bigDecimal') {
         javaDataType = 'BigDecimal';
+        jsDataType = 'number';
         isNumber = true;
-    } else if (dataType === 'tate') {
+    } else if (dataType === 'date') {
         javaDataType = 'Date';
+        jsDataType = 'Date';
+        sequelizeType = 'DATE';
     } else if (dataType === 'time') {
         javaDataType = 'Time';
+        jsDataType = 'Date';
+        sequelizeType = 'DATE';
+    } else if (dataType === 'datetime') {
+        javaDataType = 'Date';
+        jsDataType = 'Date';
+        sequelizeType = 'DATE';
     } else if (dataType === 'timestamp') {
         javaDataType = 'Timestamp';
+        jsDataType = 'number';
     } else if (dataType === 'blob' || dataType === 'varbinary') {
         javaDataType = 'byte[]';
+        jsDataType = 'byte';
     } else if (dataType === 'json') {
         javaDataType = 'JSON';
+        jsDataType = 'object';
     }
 
     return {
         javaDataType,
+        jsDataType,
+        sequelizeType,
         isString,
         isNumber,
     };
