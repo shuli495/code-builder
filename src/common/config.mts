@@ -285,7 +285,7 @@ export interface inquirerSchema {
 }
 
 /**
- * 内置指令 - 步骤选项
+ * 指令 - 步骤选项
  */
 export const inquirerGuide: Array<inquirerSchema> = [
     {
@@ -377,7 +377,7 @@ export const inquirerGuide: Array<inquirerSchema> = [
 ];
 
 /**
- * 内置指令 - 历史记录
+ * 指令 - 历史记录
  */
 export const inquirerHistory: Array<inquirerSchema> = [
     {
@@ -392,6 +392,25 @@ export const inquirerHistory: Array<inquirerSchema> = [
             zh: '无历史记录',
             en: 'no history',
         }[language],
+    },
+];
+
+/**
+ * 指令 - 文件写入冲突
+ * r 替换当前文件
+ * R 替换全部
+ * n 跳过当前文件
+ * N 跳过全部
+ */
+export const inquirerConflict: Array<inquirerSchema> = [
+    {
+        type: 'input',
+        message: {
+            zh: '🛎️  文件已存在，如何操作？[r]替换 [R]全部替换 [n]取消 [N]全部取消 ：',
+            en: '🛎️  The file already exists, what should be done? [r]eplace [R]eplaceAll [n]one [N]oneAll :',
+        }[language],
+        name: 'conflict',
+        choices: ['r', 'R', 'n', 'N'],
     },
 ];
 

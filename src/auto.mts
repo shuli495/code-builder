@@ -3,8 +3,9 @@ import * as ejs from 'ejs';
 import * as path from 'path';
 import * as mysql from 'mysql2';
 import chalk from 'chalk';
-import ora, { Ora } from 'ora';
 import moment from 'moment';
+import ora, { Ora } from 'ora';
+import inquirer from 'inquirer';
 import { fileURLToPath } from 'url';
 import { hump, file } from './common/transitionTableName.mjs';
 import { config as templatePighandSpring } from './template/config/pighand-spring.mjs';
@@ -18,6 +19,7 @@ import {
     templateParams,
     templateType,
     templateConfig,
+    inquirerConflict,
 } from './common/config.mjs';
 
 class Auto {
@@ -77,20 +79,14 @@ class Auto {
 
         for (const table of tables) {
             const { tableName, tableComment } = table;
-            const columns = tableColumnMap.get(table.tableName);
 
-            // 文件名
-            const tableFileName = file(tableName);
-
-            // 驼峰名
-            const tableHumpName = hump(tableName);
             const params: templateParams = {
                 ...customParams,
                 tableName,
-                tableFileName,
-                tableHumpName,
                 tableComment,
-                columns,
+                tableFileName: file(tableName), // 文件名，开头字母大写
+                tableHumpName: hump(tableName), // 驼峰名
+                columns: tableColumnMap.get(table.tableName),
             };
 
             this.spinner.text = chalk.blue(tableName);
@@ -189,7 +185,10 @@ class Auto {
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = path.dirname(__filename);
 
-        templateConfig.forEach((item) => {
+        // 是否批量操作
+        let isBatch = false;
+
+        for (const item of templateConfig) {
             const { name, templateFile, saveFilePath = name, fileExtension } = item;
 
             // 使用模板生成文件
@@ -198,21 +197,48 @@ class Auto {
             const templateFileString = fs.readFileSync(templateFilePath).toString();
             const newFileString = ejs.render(templateFileString, params);
 
-            // 生产文件
             // 路径：filePath（不存在默认使用name）/文件名 + 扩展名
             const filePath = path.join(saveFileRootPath || __dirname, saveFilePath);
             const fileName = `${params.tableFileName}${file(name)}.${fileExtension}`;
 
-            const isExist = fs.existsSync(filePath);
-            if (!isExist) {
+            // 目录是否存在
+            const isPathExist = fs.existsSync(filePath);
+            if (!isPathExist) {
                 fs.mkdirSync(filePath, { recursive: true });
             }
 
             const saveFile = path.join(filePath, fileName);
+            const isFileExist = fs.existsSync(saveFile);
+
+            // 如果文件存在，且未执行批量操作，提示用户选择操作方式
+            if (isFileExist && !isBatch) {
+                // 显示冲突文件
+                this.spinner.warn(chalk.yellow(saveFile));
+
+                // 输入参数不正确，重新提示选择
+                let conflict;
+                while (!conflict) {
+                    const prompt = inquirer.createPromptModule();
+                    const op = await prompt(inquirerConflict);
+
+                    if (inquirerConflict[0].choices.includes(op.conflict)) {
+                        conflict = op.conflict;
+                    }
+                }
+
+                if (conflict === 'n') {
+                    continue;
+                } else if (conflict === 'N') {
+                    break;
+                } else if (conflict === 'R') {
+                    isBatch = true;
+                }
+            }
+
             fs.writeFileSync(saveFile, newFileString);
 
             ora(chalk.green(path.resolve(saveFile))).succeed();
-        });
+        }
     }
 }
 
