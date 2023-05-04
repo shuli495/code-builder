@@ -26,6 +26,9 @@ class Auto {
     config: Config;
     spinner: Ora;
 
+    // 是否批量操作
+    isBatch = false;
+
     constructor(options: Options, spinner: Ora) {
         this.spinner = spinner;
 
@@ -76,6 +79,8 @@ class Auto {
     async run() {
         const { customParams } = this.config;
         const { tables, tableColumnMap } = await this.getTableInfos();
+
+        this.isBatch = false;
 
         for (const table of tables) {
             const { tableName, tableComment } = table;
@@ -185,9 +190,6 @@ class Auto {
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = path.dirname(__filename);
 
-        // 是否批量操作
-        let isBatch = false;
-
         for (const item of templateConfig) {
             const { name, templateFile, saveFilePath = name, fileExtension } = item;
 
@@ -211,7 +213,7 @@ class Auto {
             const isFileExist = fs.existsSync(saveFile);
 
             // 如果文件存在，且未执行批量操作，提示用户选择操作方式
-            if (isFileExist && !isBatch) {
+            if (isFileExist && !this.isBatch) {
                 // 显示冲突文件
                 this.spinner.warn(chalk.yellow(saveFile));
 
@@ -231,7 +233,7 @@ class Auto {
                 } else if (conflict === 'N') {
                     break;
                 } else if (conflict === 'R') {
-                    isBatch = true;
+                    this.isBatch = true;
                 }
             }
 

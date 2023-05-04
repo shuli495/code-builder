@@ -5,9 +5,9 @@ import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.base.BaseController;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.response.Result;
-import com.pighand.notify.domain.<%= tableFileName %>Domain;
+import <%= javaPackage %>.domain.<%= tableFileName %>Domain;
 import <%= javaPackage %>.service.<%= tableFileName %>Service;
-import com.pighand.notify.vo.<%= tableFileName %>VO;
+import <%= javaPackage %>.vo.<%= tableFileName %>VO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author <%= author %>
  * @createDate <%= dateTime %>
  */
-@RestController(path = "<%= tableName.replace('_', '/') %>", docName = "<%= tableComment %>")
+@RestController(path = "<%= tableName.replace('_', '/') %>", docName = "<%= tableComment.replace('\n', ' ') %>")
 public class <%= tableFileName %>Controller extends BaseController<<%= tableFileName %>Service> {
 
     /**
