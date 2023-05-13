@@ -269,5 +269,5 @@ try {
         symbol: '🍺',
     });
 } catch (e) {
-    spinner.fail(`${cmdConfig.ora.fail[language]}: ${e.message}`);
+    spinner.fail(chalk.redBright(`${cmdConfig.ora.fail[language]}: ${e.message}`));
 }

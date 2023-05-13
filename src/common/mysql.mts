@@ -1,5 +1,5 @@
-import { hump } from './transitionTableName.mjs';
-import { TableInfo, ColumnInfo } from './config.mjs';
+import { file, hump } from './transitionTableName.mjs';
+import { relationTableName, TableInfo, ColumnInfo, TableRelation, tableRelationMap } from './config.mjs';
 
 /**
  * 查询所有表
@@ -13,7 +13,7 @@ const getAllTables = async (connection: any, database: string) => {
                 FROM
                     information_schema.tables
                 WHERE
-                    table_schema = ?`;
+                    table_schema = ? and table_name not in ('${relationTableName}')`;
 
     const result = await connection.query(sql, [database]);
     const rows: Array<TableInfo> = result[0];
@@ -924,4 +924,59 @@ const getTableColumn = async (connection: any, database: string, tableNames: Arr
     return rows;
 };
 
-export { getAllTables, getTableComment, getTableColumn };
+/**
+ * 查询表映射关系
+ */
+const getTableRelation = async (connection: any, database: string) => {
+    const tableRelationMap: tableRelationMap = {};
+    const columns = {};
+    const sql = `SELECT * FROM ${database}.${relationTableName}`;
+
+    try {
+        const result = await connection.query(sql);
+        const rows: Array<TableRelation> = result[0];
+
+        for (const item of rows) {
+            const { table_a, table_a_key, table_b, table_b_key, relation, join = 'l' } = item;
+            const tableAInfos = new Set(tableRelationMap[item.table_a] || []);
+            const tableBInfos = new Set(tableRelationMap[item.table_b] || []);
+
+            const tableAColumns = columns[table_a] || (await getTableColumn(connection, database, [table_a]));
+            columns[table_a] = tableAColumns;
+
+            const tableBColumns = columns[table_b] || (await getTableColumn(connection, database, [table_b]));
+            columns[table_b] = tableBColumns;
+
+            tableAInfos.add({
+                table: table_b,
+                tableFileName: file(table_b),
+                tableHumpName: hump(table_b),
+                mainKey: table_a_key,
+                relationKey: table_b_key,
+                relation,
+                join,
+                columns: tableBColumns,
+            });
+
+            tableBInfos.add({
+                table: table_a,
+                tableFileName: file(table_a),
+                tableHumpName: hump(table_a),
+                mainKey: table_b_key,
+                relationKey: table_a_key,
+                relation: relation.split('').reverse().join('') as any,
+                join,
+                columns: tableAColumns,
+            });
+
+            tableRelationMap[item.table_a] = Array.from(tableAInfos);
+            tableRelationMap[item.table_b] = Array.from(tableBInfos);
+        }
+    } catch (e) {
+        console.log(e);
+    }
+
+    return tableRelationMap;
+};
+
+export { getAllTables, getTableComment, getTableColumn, getTableRelation };

@@ -92,9 +92,35 @@ code-file-builder guide
 | columns.autoIncrement          | boolean  | N                            | 是否自增                                              |
 | columns.columnComment          | string   | N                            | 列备注                                                |
 | columns.isReservedWords        | boolean  | N                            | 是否是 mysql 保留字                                   |
+| joinTables                     | array    | N                            | 关联表信息                                            |
+| joinTables.table               | string   | N                            | 表名                                                  |
+| joinTables.tableFileName       | string   | N                            | 关联表信息                                            |
+| joinTables.tableHumpName       | string   | N                            | 驼峰格式的表名                                        |
+| joinTables.mainKey             | string   | N                            | 主表主键                                              |
+| joinTables.relationKey         | string   | N                            | 关联表关联键                                          |
+| joinTables.relation            | string   | N                            | 对应关系 '11','1n','n1','nn'                          |
+| joinTables.join                | string   | N                            | 关联关系 l: left join; I: inner join                  |
+| joinTables.columns             | array    | N                            | 表字段信息                                            |
 
 <br/>
 如需其他参数，可使用--params、--paramsPath添加自定义参数
+
+## 表关联信息
+
+根据表 cfb_relation 生成关联关系。结构参考“模板文件-joinTables”。生成表时，会自动忽略 cfb_relation 表。
+
+```sql
+CREATE TABLE `cfb_relation` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `table_a` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `table_a_key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `table_b` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `table_b_key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `relation` enum('11','1n','n1','nn') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '''11'',''1n'',''n1'',''nn''',
+  `join` enum('l','i') DEFAULT NULL COMMENT 'l: left join; I: inner join',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='code_file_builder外键映射关系表';
+```
 
 ## 历史记录
 

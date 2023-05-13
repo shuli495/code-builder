@@ -4,6 +4,8 @@ import { osLocaleSync } from 'os-locale';
 
 export const projectName = 'code_file_builder';
 
+export const relationTableName = 'cfb_relation';
+
 /**
  * 历史记录内容格式
  */
@@ -516,6 +518,45 @@ export interface ColumnInfo {
 }
 
 /**
+ * 映射关系表
+ */
+export interface TableRelation {
+    table_a: string;
+    table_a_key: string;
+    table_b: string;
+    table_b_key: string;
+    relation: '11' | '1n' | 'n1' | 'nn';
+    join: 'l' | 'i';
+}
+
+/**
+ * 表关系映射map
+ *
+ * key 主表
+ * value 关联表
+ */
+export interface tableRelationMap {
+    [tableName: string]: Array<{
+        // 关联表名
+        table: string;
+        // 首字母大写驼峰
+        tableFileName;
+        // 驼峰命名
+        tableHumpName;
+        // 主表，关联字段
+        mainKey: string;
+        // 关联表，关联字段
+        relationKey: string;
+        // 对应关系
+        relation: '11' | '1n' | 'n1' | 'nn';
+        // 关联关系
+        join: 'l' | 'i';
+        // 关联表列信息
+        columns: Array<ColumnInfo>;
+    }>;
+}
+
+/**
  * 模板配置
  */
 export interface templateConfig {
@@ -550,4 +591,6 @@ export interface templateParams {
 
     /** 数据库表列信息 */
     columns: Array<ColumnInfo>;
+
+    tableRelationMap: tableRelationMap;
 }

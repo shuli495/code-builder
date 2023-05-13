@@ -2,6 +2,11 @@ package <%= javaPackage %>.vo;
 
 import lombok.Data;
 import <%= javaPackage %>.domain.<%= tableFileName %>Domain;
+<%_
+(tableRelationMap[tableName] || []).forEach((relation) => {
+-%>
+import <%= javaPackage %>.vo.<%= relation.tableFileName %>VO;
+<%_});-%>
 
 /**
  * <%= tableComment %>
@@ -11,4 +16,17 @@ import <%= javaPackage %>.domain.<%= tableFileName %>Domain;
  */
 @Data
 public class <%= tableFileName %>VO extends <%= tableFileName %>Domain {
+    <%_
+    (tableRelationMap[tableName] || []).forEach((relation) => {
+        if(relation.relation === '11' || relation.relation === 'n1') {
+    -%>
+    private <%= relation.tableFileName %>VO <%= relation.tableHumpName %>;
+    <%_
+        } else {
+    -%>
+    private List<<%= relation.tableFileName %>VO> <%= relation.tableHumpName %>s;
+    <%_
+        }
+    });
+    -%>
 }

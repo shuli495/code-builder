@@ -6,6 +6,7 @@ import <%= javaPackage %>.domain.<%= tableFileName %>Domain;
 import <%= javaPackage %>.vo.<%= tableFileName %>VO;
 import org.apache.ibatis.annotations.Mapper;
 import com.pighand.framework.spring.page.PageOrList;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <%= tableComment %>
@@ -23,5 +24,14 @@ public interface <%= tableFileName %>Mapper extends BaseMapper<<%= tableFileName
      * @param <%= tableHumpName %>VO
      * @return
      */
-    PageOrList<<%= tableFileName %>VO> query(Page pageInfo, <%= tableFileName %>VO <%= tableHumpName %>VO);
+    PageOrList<<%= tableFileName %>VO> select(Page pageInfo, <%= tableFileName %>VO <%= tableHumpName %>VO);
+
+    /**
+     * 详情
+     *
+     * @param <%= tableHumpName %>VO
+     * @return
+     */
+    <%= tableFileName %>VO select(@Param("<%= tableHumpName %>VO") <%= tableFileName %>VO <%= tableHumpName %>VO);
+
 }

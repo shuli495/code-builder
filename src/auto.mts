@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 import { hump, file } from './common/transitionTableName.mjs';
 import { config as templatePighandSpring } from './template/config/pighand-spring.mjs';
 import { config as templatePighandKoa } from './template/config/pighand-koa.mjs';
-import { getTableComment, getTableColumn, getAllTables } from './common/mysql.mjs';
+import { getTableComment, getTableColumn, getAllTables, getTableRelation } from './common/mysql.mjs';
 import {
     Options,
     Config,
@@ -78,7 +78,7 @@ class Auto {
 
     async run() {
         const { customParams } = this.config;
-        const { tables, tableColumnMap } = await this.getTableInfos();
+        const { tables, tableColumnMap, tableRelationMap } = await this.getTableInfos();
 
         this.isBatch = false;
 
@@ -92,6 +92,7 @@ class Auto {
                 tableFileName: file(tableName), // 文件名，开头字母大写
                 tableHumpName: hump(tableName), // 驼峰名
                 columns: tableColumnMap.get(table.tableName),
+                tableRelationMap,
             };
 
             this.spinner.text = chalk.blue(tableName);
@@ -136,6 +137,9 @@ class Auto {
             tableColumns = await getTableColumn(connection, database, allTableNames);
         }
 
+        // 查询表关联信息
+        const tableRelationMap = await getTableRelation(connection, database);
+
         await connection.end();
 
         // 根据表明格式化列
@@ -152,6 +156,7 @@ class Auto {
         return {
             tables,
             tableColumnMap,
+            tableRelationMap,
         };
     }
 
@@ -193,12 +198,6 @@ class Auto {
         for (const item of templateConfig) {
             const { name, templateFile, saveFilePath = name, fileExtension } = item;
 
-            // 使用模板生成文件
-            const templateFilePath =
-                templatePathType === 'internal' ? path.resolve(__dirname, templateFile) : templateFile;
-            const templateFileString = fs.readFileSync(templateFilePath).toString();
-            const newFileString = ejs.render(templateFileString, params);
-
             // 路径：filePath（不存在默认使用name）/文件名 + 扩展名
             const filePath = path.join(saveFileRootPath || __dirname, saveFilePath);
             const fileName = `${params.tableFileName}${file(name)}.${fileExtension}`;
@@ -211,6 +210,18 @@ class Auto {
 
             const saveFile = path.join(filePath, fileName);
             const isFileExist = fs.existsSync(saveFile);
+
+            // 使用模板生成文件
+            let newFileString = '';
+            try {
+                const templateFilePath =
+                    templatePathType === 'internal' ? path.resolve(__dirname, templateFile) : templateFile;
+                const templateFileString = fs.readFileSync(templateFilePath).toString();
+                newFileString = ejs.render(templateFileString, params);
+            } catch (e) {
+                ora(chalk.redBright(path.resolve(saveFile))).fail();
+                throw e;
+            }
 
             // 如果文件存在，且未执行批量操作，提示用户选择操作方式
             if (isFileExist && !this.isBatch) {

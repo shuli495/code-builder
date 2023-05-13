@@ -9,6 +9,8 @@ import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.page.PageType;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <%= tableComment %>
  *
@@ -17,62 +19,67 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class <%= tableFileName %>ServiceImpl extends BaseServiceImpl<<%= tableFileName %>Mapper, <%= tableFileName %>Domain>
-        implements <%= tableFileName %>Service{
+     implements <%= tableFileName %>Service{
 
-   /**
-    * 创建
-    *
-    * @param <%= tableHumpName %>VO
-    * @return
-    */
-   @Override
-   public <%= tableFileName %>VO create(<%= tableFileName %>VO <%= tableHumpName %>VO) {
+    /**
+     * 创建
+     *
+     * @param <%= tableHumpName %>VO
+     * @return
+     */
+    @Override
+    public <%= tableFileName %>VO create(<%= tableFileName %>VO <%= tableHumpName %>VO) {
         super.mapper.insert(<%= tableHumpName %>VO);
 
         return <%= tableHumpName %>VO;
-   }
+    }
 
-   /**
-    * 详情
-    *
-    * @param id
-    * @return
-    */
-   @Override
-   public <%= tableFileName %>Domain find(Long id) {
-        <%= tableFileName %>Domain <%= tableHumpName %>Domain = super.mapper.selectById(id);
-        return <%= tableHumpName %>Domain;
-   }
+    /**
+     * 详情
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public <%= tableFileName %>Domain find(Long id) {
+        <%= tableFileName %>VO <%= tableHumpName %>VO = new <%= tableFileName %>VO();
+        <%= tableHumpName %>VO.setId(id);
+        <%= tableHumpName %>VO.setJoinTables(List.of(<%- Object.keys(tableRelationMap).map(item => `"${item}"`).join(', ') %>));
+        <%= tableHumpName %>VO = super.mapper.select(<%= tableHumpName %>VO);
+        return <%= tableHumpName %>VO;
+    }
 
-   /**
-    * 分页或列表
-    *
-    * @param <%= tableHumpName %>VO
-    * @return PageOrList<<%= tableFileName %>VO>
-    */
-   @Override
-   public PageOrList<<%= tableFileName %>VO> query(<%= tableFileName %>VO <%= tableHumpName %>VO) {
+    /**
+     * 分页或列表
+     *
+     * @param <%= tableHumpName %>VO
+     * @return PageOrList<<%= tableFileName %>VO>
+     */
+    @Override
+    public PageOrList<<%= tableFileName %>VO> query(<%= tableFileName %>VO <%= tableHumpName %>VO) {
+        <%= tableHumpName %>VO.setJoinTables(List.of(<%- Object.keys(tableRelationMap).map(item => `"${item}"`).join(', ') %>));
+
         PageOrList pageInfo = <%= tableHumpName %>VO.pageParamOrInit(PageType.NEXT_TOKEN);
-        return super.mapper.query(pageInfo, <%= tableHumpName %>VO);
-   }
+        return super.mapper.select(pageInfo, <%= tableHumpName %>VO);
+    }
 
-   /**
-    * 修改
-    *
-    * @param <%= tableHumpName %>VO
-    */
-   @Override
-   public void update(<%= tableFileName %>VO <%= tableHumpName %>VO) {
+    /**
+     * 修改
+     *
+     * @param <%= tableHumpName %>VO
+     */
+    @Override
+    public void update(<%= tableFileName %>VO <%= tableHumpName %>VO) {
         super.mapper.updateById(<%= tableHumpName %>VO);
-   }
+    }
 
-   /**
-    * 删除
-    *
-    * @param id
-    */
-   @Override
-   public void delete(Long id) {
+    /**
+     * 删除
+     *
+     * @param id
+     */
+    @Override
+    public void delete(Long id) {
         super.mapper.deleteById(id);
-   }
+    }
 }
