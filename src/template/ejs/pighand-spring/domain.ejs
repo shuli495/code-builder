@@ -3,10 +3,14 @@ package <%= javaPackage %>.domain;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.pighand.framework.spring.api.annotation.field.Field;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.field.ResponseField;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
+import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomain;
 <%= columns.filter(item => item.javaDataType == 'JSON').length > 0 ? "import com.pighand.framework.spring.api.springdoc.dataType.EmptyObject;" : "" %>
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,6 +37,8 @@ public class <%= tableFileName %>Domain extends BaseDomain implements Serializab
     <%_ } -%>
     <%_ if (column.primaryKey) { -%>
     @TableId
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("<%= tableHumpName %>Create")
     @RequestFieldException("<%= tableHumpName %>Update")
     <%_ } else if (!column.isNullable) { -%>
