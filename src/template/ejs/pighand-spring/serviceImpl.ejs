@@ -44,7 +44,7 @@ public class <%= tableFileName %>ServiceImpl extends BaseServiceImpl<<%= tableFi
     public <%= tableFileName %>Domain find(Long id) {
         <%= tableFileName %>VO <%= tableHumpName %>VO = new <%= tableFileName %>VO();
         <%= tableHumpName %>VO.setId(id);
-        <%= tableHumpName %>VO.setJoinTables(List.of(<%- Object.keys(tableRelationMap).map(item => `"${item}"`).join(', ') %>));
+        <%= tableHumpName %>VO.setJoinTables(List.of(<%- (tableRelationMap[tableName] || []).map(item => `"${item.table}"`).join(', ') %>));
         <%= tableHumpName %>VO = super.mapper.select(<%= tableHumpName %>VO);
         return <%= tableHumpName %>VO;
     }
@@ -57,7 +57,7 @@ public class <%= tableFileName %>ServiceImpl extends BaseServiceImpl<<%= tableFi
      */
     @Override
     public PageOrList<<%= tableFileName %>VO> query(<%= tableFileName %>VO <%= tableHumpName %>VO) {
-        <%= tableHumpName %>VO.setJoinTables(List.of(<%- Object.keys(tableRelationMap).map(item => `"${item}"`).join(', ') %>));
+        <%= tableHumpName %>VO.setJoinTables(List.of(<%- (tableRelationMap[tableName] || []).map(item => `"${item.table}"`).join(', ') %>));
 
         PageOrList pageInfo = <%= tableHumpName %>VO.pageParamOrInit(PageType.NEXT_TOKEN);
         return super.mapper.select(pageInfo, <%= tableHumpName %>VO);

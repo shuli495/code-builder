@@ -28,7 +28,7 @@
         where 1=1
         <%_ columns.forEach(item => { -%>
             <if test="<%= tableHumpName %>VO.<%= item.columnName %> != null">
-                and <%= tableName %>.<%= item.columnName %> <% if (item.isString) { _%> like "%"#{<%= tableHumpName %>VO.<%= item.columnName %>}"%" <% } else { _%>= #{<%= tableHumpName %>VO.<%= item.columnName %>}<%_ } %>
+                and <%= tableName %>.<%= item.columnName %> <% if (item.isString) { _%> like "%"#{<%= tableHumpName %>VO.<%= item.columnHumpName %>}"%" <% } else { _%>= #{<%= tableHumpName %>VO.<%= item.columnHumpName %>}<%_ } %>
             </if>
         <%_ }) -%>
     </select>
