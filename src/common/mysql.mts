@@ -972,9 +972,7 @@ const getTableRelation = async (connection: any, database: string) => {
             tableRelationMap[item.table_a] = Array.from(tableAInfos);
             tableRelationMap[item.table_b] = Array.from(tableBInfos);
         }
-    } catch (e) {
-        console.log(e);
-    }
+    } catch (e) {}
 
     return tableRelationMap;
 };
