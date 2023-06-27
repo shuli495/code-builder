@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author <%= author %>
  * @createDate <%= dateTime %>
  */
-@RestController(path = "<%= tableName.replace('_', '/') %>", docName = "<%= tableComment.replace('\n', ' ') %>")
+@RestController(path = "<%= tableName.replaceAll('_', '/') %>", docName = "<%= tableComment.replace('\n', ' ') %>")
 public class <%= tableFileName %>Controller extends BaseController<<%= tableFileName %>Service> {
 
     /**

@@ -1,0 +1,51 @@
+<template>
+    <PSearch :handle-query="<%= tableHumpName %>.query"> </PSearch>
+
+    <PDataTable
+        :handle-query="<%= tableHumpName %>.query"
+        :handle-find="<%= tableHumpName %>.find"
+        :handle-delete="<%= tableHumpName %>.del">
+    </PDataTable>
+
+    <PDrawer
+        :handle-create="<%= tableHumpName %>.create"
+        :handle-update="<%= tableHumpName %>.update"
+        :handle-query="<%= tableHumpName %>.query">
+    </PDrawer>
+</template>
+
+<script lang="ts" setup>
+import { <%= tableHumpName %> } from '@/api/index.ts';
+import provideForm from '@/common/provideForm';
+
+provideForm([
+<%_
+    columns
+        .filter(item =>  !['createdAt','creatorId','deleted','deletedAt','deleterId'].includes(item.columnHumpName))
+        .forEach((column) => {
+-%>
+    {
+        label: '<%= column.columnComment || column.columnHumpName %>',
+        prop: '<%= column.columnHumpName %>',
+        isSearch: true,
+        isSearchMore: false,
+        searchPlaceholder: '模糊搜索',
+        isTable: true,
+        isDetail: true,
+    <%_ if (column.primaryKey) { -%>
+        isPrimaryKey: true,
+        hidden: true,
+    <%_ } -%>
+    <%_ if (column.isNullable) { -%>
+        rules: [
+            {
+                required: true,
+                message: '<%= column.columnComment || column.columnHumpName %>必填',
+                trigger: 'blur'
+            }
+        ],
+    <%_ } -%>
+    },
+<%_ }); -%>
+]);
+</script>

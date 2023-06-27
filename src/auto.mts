@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url';
 import { hump, file } from './common/transitionTableName.mjs';
 import { config as templatePighandSpring } from './template/config/pighand-spring.mjs';
 import { config as templatePighandKoa } from './template/config/pighand-koa.mjs';
+import { config as templatePighandDashboardVue } from './template/config/pighand-dashboard-vue.mjs';
 import { getTableComment, getTableColumn, getAllTables, getTableRelation } from './common/mysql.mjs';
 import {
     Options,
@@ -188,6 +189,9 @@ class Auto {
                     break;
                 case templateType.pighandKoa:
                     templateConfig = templatePighandKoa;
+                    break;
+                case templateType.pighandDashboardVue:
+                    templateConfig = templatePighandDashboardVue;
                     break;
             }
         }

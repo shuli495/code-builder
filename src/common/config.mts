@@ -52,6 +52,7 @@ export enum optionsType {
 export enum templateType {
     pighandSpring = 'pighand-spring',
     pighandKoa = 'pighand-koa',
+    pighandDashboardVue = 'pighand-dashboard-vue',
 }
 
 /**
@@ -155,7 +156,11 @@ export const cmdConfig = {
         alias: 'm',
         default: '',
         choices: (custom?: Array<string>) => {
-            let templates: Array<string> = [templateType.pighandSpring, templateType.pighandKoa];
+            let templates: Array<string> = [
+                templateType.pighandSpring,
+                templateType.pighandKoa,
+                templateType.pighandDashboardVue,
+            ];
             if (custom) {
                 templates = [...templates, ...custom];
             }
