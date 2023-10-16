@@ -30,13 +30,15 @@ provideForm([
         isSearch: true,
         isSearchMore: false,
         searchPlaceholder: '模糊搜索',
-        isTable: true,
         isDetail: true,
     <%_ if (column.primaryKey) { -%>
         isPrimaryKey: true,
         hidden: true,
-    <%_ } -%>
-    <%_ if (column.isNullable) { -%>
+        isTable: false,
+    <%_ } else { -%>
+        isTable: true,
+    <%_ }
+        if (column.isNullable) { -%>
         rules: [
             {
                 required: true,

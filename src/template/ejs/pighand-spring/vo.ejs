@@ -1,6 +1,7 @@
 package <%= javaPackage %>.vo;
 
 import lombok.Data;
+import com.baomidou.mybatisplus.annotation.TableField;
 import <%= javaPackage %>.domain.<%= tableFileName %>Domain;
 <%_
 (tableRelationMap[tableName] || []).forEach((relation) => {
@@ -23,10 +24,12 @@ public class <%= tableFileName %>VO extends <%= tableFileName %>Domain {
     (tableRelationMap[tableName] || []).forEach((relation) => {
         if(relation.relation === '11' || relation.relation === 'n1') {
     -%>
+    @TableField(exist = false)
     private <%= relation.tableFileName %>VO <%= relation.tableHumpName %>;
     <%_
         } else {
     -%>
+    @TableField(exist = false)
     private List<<%= relation.tableFileName %>VO> <%= relation.tableHumpName %>s;
     <%_
         }

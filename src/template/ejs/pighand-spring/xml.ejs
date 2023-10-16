@@ -14,7 +14,7 @@
             (tableRelationMap[tableName] || []).forEach((relation) => {
         -%>
             <if test="<%= tableHumpName %>VO.joinTables.contains('<%= relation.table %>')">
-                ,<%= relation.columns.map(relationColumn => `${relationColumn.tableName}.\`${relationColumn.columnName}\``).join(', ') %>
+                ,<%= relation.columns.map(relationColumn => `${relationHumpColumn.tableName}.\`${relationColumn.columnName}\` as '${relationHumpColumn.tableHumpName}.${relationColumn.columnHumpName}'`).join(', ') %>
             </if>
         <%_});-%>
         from <%= tableName %>
@@ -27,8 +27,8 @@
         <%_});-%>
         where 1=1
         <%_ columns.forEach(item => { -%>
-            <if test="<%= tableHumpName %>VO.<%= item.columnName %> != null">
-                and <%= tableName %>.<%= item.columnName %> <% if (item.isString) { _%> like "%"#{<%= tableHumpName %>VO.<%= item.columnHumpName %>}"%" <% } else { _%>= #{<%= tableHumpName %>VO.<%= item.columnHumpName %>}<%_ } %>
+            <if test="<%= tableHumpName %>VO.<%= item.columnHumpName %> != null">
+                and <%= tableName %>.<%= item.columnName %> <% if (item.isString) { _%> like CONCAT('%', #{<%= tableHumpName %>VO.<%= item.columnHumpName %>}, '%')' <% } else { _%>= #{<%= tableHumpName %>VO.<%= item.columnHumpName %>}<%_ } %>
             </if>
         <%_ }) -%>
     </select>
