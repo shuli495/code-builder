@@ -1,0 +1,37 @@
+package <%= javaPackage %>.mapper;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.pighand.framework.spring.base.BaseMapper;
+import <%= javaPackage %>.domain.<%= tableFileName %>Domain;
+import <%= javaPackage %>.vo.<%= tableFileName %>VO;
+import org.apache.ibatis.annotations.Mapper;
+import com.pighand.framework.spring.page.PageOrList;
+import org.apache.ibatis.annotations.Param;
+
+/**
+ * <%= tableComment %>
+ *
+ * @author <%= author %>
+ * @createDate <%= dateTime %>
+ */
+@Mapper
+public interface <%= tableFileName %>Mapper extends BaseMapper<<%= tableFileName %>Domain> {
+
+    /**
+     * 分页或列表
+     *
+     * @param pageInfo
+     * @param <%= tableHumpName %>VO
+     * @return
+     */
+    PageOrList<<%= tableFileName %>VO> select(Page pageInfo, <%= tableFileName %>VO <%= tableHumpName %>VO);
+
+    /**
+     * 详情
+     *
+     * @param <%= tableHumpName %>VO
+     * @return
+     */
+    <%= tableFileName %>VO select(@Param("<%= tableHumpName %>VO") <%= tableFileName %>VO <%= tableHumpName %>VO);
+
+}

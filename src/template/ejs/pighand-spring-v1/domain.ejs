@@ -1,0 +1,61 @@
+package <%= javaPackage %>.domain;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.pighand.framework.spring.api.annotation.field.Field;
+import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
+import com.pighand.framework.spring.api.annotation.field.ResponseField;
+import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
+import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
+import com.pighand.framework.spring.base.BaseDomain;
+<%= columns.filter(item => item.javaDataType == 'JSON').length > 0 ? "import com.pighand.framework.spring.api.springdoc.dataType.EmptyObject;" : "" %>
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import org.hibernate.validator.constraints.Length;
+
+import java.io.Serializable;
+<%= columns.filter(item => item.javaDataType == 'Date').length > 0 ? "import java.util.Date;" : "" %>
+
+
+/**
+ * <%= tableComment %>
+ *
+ * @author <%= author %>
+ * @createDate <%= dateTime %>
+ */
+@TableName(value = "<%= tableName %>")
+@Data
+public class <%= tableFileName %>Domain extends BaseDomain implements Serializable {
+<%_
+    columns.forEach((column) => {
+-%>
+    <%_ if (column.isReservedWords) { -%>
+    @TableField("`<%= column.columnName %>`")
+    <%_ } -%>
+    <%_ if (column.primaryKey) { -%>
+    @TableId
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    @RequestFieldException("<%= tableHumpName %>Create")
+    @RequestFieldException("<%= tableHumpName %>Update")
+    <%_ } else if (!column.isNullable) { -%>
+    @NotNull(groups = {ValidationGroup.Create.class})
+    <%_ } -%>
+    <%_ if (column.isString) { -%>
+    @Length(max = <%= column.characterMaximumLength %>)
+    <%_ } -%>
+    <%_ if (column.columnComment) { -%>
+    @Schema(description = "<%= column.columnComment %>"<%= column.javaDataType == 'JSON' ? ", implementation = EmptyObject.class" : "" %>)
+    <%_ } -%>
+    private <%= column.javaDataType %> <%= column.columnHumpName %>;
+
+<%_ }); -%>
+
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
+}

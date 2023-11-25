@@ -1,0 +1,20 @@
+package <%= javaPackage %>.entityMapper;
+
+import com.pighand.user.domain.<%= tableFileName %>Domain;
+import com.pighand.user.domain.<%= tableFileName %>VO;
+import org.mapstruct.Mapper;
+
+
+/**
+ * <%= tableComment %>
+ *
+ * @author <%= author %>
+ * @createDate <%= dateTime %>
+ */
+ @Mapper(componentModel = "spring")
+public class <%= tableFileName %>Mapper {
+
+    <%= tableFileName %>VO toVo(<%= tableFileName %>Domain entity);
+
+    <%= tableFileName %>Domain toDomain(<%= tableFileName %>VO vo);
+}

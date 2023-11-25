@@ -7,6 +7,12 @@ import <%= javaPackage %>.vo.<%= tableFileName %>VO;
 import org.apache.ibatis.annotations.Mapper;
 import com.pighand.framework.spring.page.PageOrList;
 import org.apache.ibatis.annotations.Param;
+import com.pighand.user.domain.table.<%= tableFileName %>TableDef;
+<%_
+(tableRelationMap[tableName] || []).forEach((relation) => {
+-%>
+import com.pighand.user.domain.table.<%= relation.tableFileName %>TableDef;
+<%_});-%>
 
 /**
  * <%= tableComment %>
@@ -17,21 +23,60 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface <%= tableFileName %>Mapper extends BaseMapper<<%= tableFileName %>Domain> {
 
+    <%= tableFileName %>TableDef <%= tableFileName %> = <%= tableFileName %>TableDef.<%= tableFileName %>;
+
+    <%_
+    (tableRelationMap[tableName] || []).forEach((relation) => {
+    -%>
+    <%= relation.tableFileName %>TableDef <%= relation.tableFileName %> = <%= relation.tableFileName %>TableDef.<%= relation.tableFileName %>;
+    <%_});-%>
+
+    /**
+     * 基础查询条件
+     *
+     * @return
+     */
+    default QueryWrapper baseQuery(List<String> joinTables) {
+        if (joinTables == null) {
+            joinTables = new ArrayList<>();
+        }
+
+        QueryWrapper queryWrapper = QueryWrapper.create();
+
+        <%_
+        (tableRelationMap[tableName] || []).forEach((relation) => {
+        -%>
+        if (joinTables.contains(<%= relation.tableFileName %>.getTableName())) {
+            queryWrapper.leftJoin(<%= relation.tableFileName %>)
+                .on(<%= relation.tableFileName %>.<%= relation.relationKey.toLocaleUpperCase() %>.eq(<%= tableFileName %>.<%= relation.mainKey.toLocaleUpperCase() %>)));
+        }
+        <%_});-%>
+
+        return queryWrapper;
+    }
+
+    /**
+     * 查询详情
+     *
+     * @param id         主键
+     * @param joinTables 关联表
+     * @return
+     */
+    default <%= tableFileName %>VO find(Long id, List<String> joinTables) {
+        QueryWrapper queryWrapper = this.baseQuery(joinTables).where(<%= tableFileName %>.ID.eq(id));
+
+        return this.selectOneByQueryAs(queryWrapper, <%= tableFileName %>VO.class);
+    }
+
     /**
      * 分页或列表
      *
-     * @param pageInfo
-     * @param <%= tableHumpName %>VO
+     * @param testDomain
      * @return
      */
-    PageOrList<<%= tableFileName %>VO> select(Page pageInfo, <%= tableFileName %>VO <%= tableHumpName %>VO);
+    default PageOrList<<%= tableFileName %>VO> query(<%= tableFileName %>Domain <%= tableFileName %>Domain) {
+        QueryWrapper queryWrapper = this.baseQuery(<%= tableFileName %>Domain.getJoinTables());
 
-    /**
-     * 详情
-     *
-     * @param <%= tableHumpName %>VO
-     * @return
-     */
-    <%= tableFileName %>VO select(@Param("<%= tableHumpName %>VO") <%= tableFileName %>VO <%= tableHumpName %>VO);
-
+        return this.page(<%= tableFileName %>Domain, queryWrapper, <%= tableFileName %>VO.class);
+    }
 }

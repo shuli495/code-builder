@@ -51,6 +51,7 @@ export enum optionsType {
  */
 export enum templateType {
     pighandSpring = 'pighand-spring',
+    pighandSpringV1 = 'pighand-spring-v1',
     pighandKoa = 'pighand-koa',
     pighandDashboardVue = 'pighand-dashboard-vue',
 }

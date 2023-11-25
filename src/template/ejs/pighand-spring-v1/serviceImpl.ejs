@@ -9,11 +9,6 @@ import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.page.PageType;
 import org.springframework.stereotype.Service;
 
-<%_
-(tableRelationMap[tableName] || []).forEach((relation) => {
--%>
-import com.pighand.user.domain.table.<%= relation.tableFileName %>TableDef;
-<%_});-%>
 import java.util.List;
 
 /**
@@ -47,11 +42,10 @@ public class <%= tableFileName %>ServiceImpl extends BaseServiceImpl<<%= tableFi
      */
     @Override
     public <%= tableFileName %>Domain find(Long id) {
-        <%_ if((tableRelationMap[tableName] || []).length > 0) { -%>
-        List<String> joinTables = List.of(<%- (tableRelationMap[tableName] || []).map(item => `"${item.table}"`).join(', ') %>);
-        <%_}-%>
-
-        <%= tableHumpName %>VO = super.mapper.find(id, joinTables);
+        <%= tableFileName %>VO <%= tableHumpName %>VO = new <%= tableFileName %>VO();
+        <%= tableHumpName %>VO.setId(id);
+        <%= tableHumpName %>VO.setJoinTables(List.of(<%- (tableRelationMap[tableName] || []).map(item => `"${item.table}"`).join(', ') %>));
+        <%= tableHumpName %>VO = super.mapper.select(<%= tableHumpName %>VO);
         return <%= tableHumpName %>VO;
     }
 
@@ -63,11 +57,10 @@ public class <%= tableFileName %>ServiceImpl extends BaseServiceImpl<<%= tableFi
      */
     @Override
     public PageOrList<<%= tableFileName %>VO> query(<%= tableFileName %>VO <%= tableHumpName %>VO) {
-        <%_ if((tableRelationMap[tableName] || []).length > 0) { -%>
-        <%= tableHumpName %>VO.setJoinTables(List.of(<%- (tableRelationMap[tableName] || []).map(item => item.tableFileName + "TableDef." + item.tableFileName + ".getTableName()").join(', ') %>));
-        <%_}-%>
+        <%= tableHumpName %>VO.setJoinTables(List.of(<%- (tableRelationMap[tableName] || []).map(item => `"${item.table}"`).join(', ') %>));
 
-        return super.mapper.query(<%= tableHumpName %>VO, <%= tableHumpName %>VO);
+        PageOrList pageInfo = <%= tableHumpName %>VO.pageParamOrInit(PageType.NEXT_TOKEN);
+        return super.mapper.select(pageInfo, <%= tableHumpName %>VO);
     }
 
     /**

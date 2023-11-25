@@ -1,0 +1,38 @@
+package <%= javaPackage %>.vo;
+
+import lombok.Data;
+import com.baomidou.mybatisplus.annotation.TableField;
+import <%= javaPackage %>.domain.<%= tableFileName %>Domain;
+<%_
+(tableRelationMap[tableName] || []).forEach((relation) => {
+    if(relation.relation === '11' || relation.relation === 'n1') {
+-%>
+import java.util.List;
+<%_}-%>
+import <%= javaPackage %>.vo.<%= relation.tableFileName %>VO;
+<%_});-%>
+
+/**
+ * <%= tableComment %>
+ *
+ * @author <%= author %>
+ * @createDate <%= dateTime %>
+ */
+@Data
+public class <%= tableFileName %>VO extends <%= tableFileName %>Domain {
+    <%_
+    (tableRelationMap[tableName] || []).forEach((relation) => {
+        if(relation.relation === '11' || relation.relation === 'n1') {
+    -%>
+    @TableField(exist = false)
+    private <%= relation.tableFileName %>VO <%= relation.tableHumpName %>;
+    <%_
+        } else {
+    -%>
+    @TableField(exist = false)
+    private List<<%= relation.tableFileName %>VO> <%= relation.tableHumpName %>s;
+    <%_
+        }
+    });
+    -%>
+}

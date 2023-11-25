@@ -1,0 +1,53 @@
+package <%= javaPackage %>.service;
+
+import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.page.PageOrList;
+import <%= javaPackage %>.domain.<%= tableFileName %>Domain;
+import <%= javaPackage %>.vo.<%= tableFileName %>VO;
+
+/**
+ * <%= tableComment %>
+ *
+ * @author <%= author %>
+ * @createDate <%= dateTime %>
+ */
+public interface <%= tableFileName %>Service extends BaseService<<%= tableFileName %>Domain> {
+
+    /**
+     * 创建
+     *
+     * @param <%= tableHumpName %>VO
+     * @return
+     */
+    <%= tableFileName %>VO create(<%= tableFileName %>VO <%= tableHumpName %>VO);
+
+    /**
+     * 详情
+     *
+     * @param id
+     * @return
+     */
+    <%= tableFileName %>Domain find(Long id);
+
+    /**
+     * 分页或列表
+     *
+     * @param <%= tableHumpName %>VO
+     * @return PageOrList<<%= tableFileName %>VO>
+     */
+    PageOrList<<%= tableFileName %>VO> query(<%= tableFileName %>VO <%= tableHumpName %>VO);
+
+    /**
+     * 修改
+     *
+     * @param <%= tableHumpName %>VO
+     */
+    void update(<%= tableFileName %>VO <%= tableHumpName %>VO);
+
+    /**
+     * 删除
+     *
+     * @param id
+     */
+    void delete(Long id);
+}

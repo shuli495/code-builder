@@ -9,6 +9,7 @@ import inquirer from 'inquirer';
 import { fileURLToPath } from 'url';
 import { hump, file } from './common/transitionTableName.mjs';
 import { config as templatePighandSpring } from './template/config/pighand-spring.mjs';
+import { config as templatePighandSpringV1 } from './template/config/pighand-spring-v1.mjs';
 import { config as templatePighandKoa } from './template/config/pighand-koa.mjs';
 import { config as templatePighandDashboardVue } from './template/config/pighand-dashboard-vue.mjs';
 import { getTableComment, getTableColumn, getAllTables, getTableRelation } from './common/mysql.mjs';
@@ -186,6 +187,9 @@ class Auto {
             switch (template) {
                 case templateType.pighandSpring:
                     templateConfig = templatePighandSpring;
+                    break;
+                case templateType.pighandSpringV1:
+                    templateConfig = templatePighandSpringV1;
                     break;
                 case templateType.pighandKoa:
                     templateConfig = templatePighandKoa;

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="<%= javaPackage %>.mapper.<%= tableFileName %>Mapper">
+    <sql id="Base_Column_List">
+        <%= columns.map(item => `${tableName}.\`${item.columnName}\``).join(', ') %>
+    </sql>
+
+    <select id="select" resultType="<%= javaPackage %>.vo.<%= tableFileName %>VO">
+        select
+            <include refid="Base_Column_List"/>
+        <%_
+            (tableRelationMap[tableName] || []).forEach((relation) => {
+        -%>
+            <if test="<%= tableHumpName %>VO.joinTables.contains('<%= relation.table %>')">
+                ,<%= relation.columns.map(relationColumn => `${relationHumpColumn.tableName}.\`${relationColumn.columnName}\` as '${relationHumpColumn.tableHumpName}.${relationColumn.columnHumpName}'`).join(', ') %>
+            </if>
+        <%_});-%>
+        from <%= tableName %>
+        <%_
+            (tableRelationMap[tableName] || []).forEach((relation) => {
+        -%>
+        <if test="<%= tableHumpName %>VO.joinTables.contains('<%= relation.table %>')">
+            left join <%= relation.table %> on <%= tableName %>.<%= relation.mainKey %> = <%= relation.table %>.<%= relation.relationKey %>
+        </if>
+        <%_});-%>
+        where 1=1
+        <%_ columns.forEach(item => { -%>
+            <if test="<%= tableHumpName %>VO.<%= item.columnHumpName %> != null">
+                and <%= tableName %>.<%= item.columnName %> <% if (item.isString) { _%> like CONCAT('%', #{<%= tableHumpName %>VO.<%= item.columnHumpName %>}, '%')' <% } else { _%>= #{<%= tableHumpName %>VO.<%= item.columnHumpName %>}<%_ } %>
+            </if>
+        <%_ }) -%>
+    </select>
+
+</mapper>
