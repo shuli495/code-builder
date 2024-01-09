@@ -1,5 +1,6 @@
 package <%= javaPackage %>.service.impl;
 
+import com.mybatisflex.core.query.QueryWrapper;
 import <%= javaPackage %>.domain.<%= tableFileName %>Domain;
 import <%= javaPackage %>.mapper.<%= tableFileName %>Mapper;
 import <%= javaPackage %>.service.<%= tableFileName %>Service;
@@ -48,11 +49,12 @@ public class <%= tableFileName %>ServiceImpl extends BaseServiceImpl<<%= tableFi
     @Override
     public <%= tableFileName %>Domain find(Long id) {
         <%_ if((tableRelationMap[tableName] || []).length > 0) { -%>
-        List<String> joinTables = List.of(<%- (tableRelationMap[tableName] || []).map(item => `"${item.table}"`).join(', ') %>);
-        <%_}-%>
+        List<String> joinTables = List.of(<%- (tableRelationMap[tableName] || []).map(item => item.table.toUpperCase() + ".getTableName()").join(', ') %>);
 
-        <%= tableHumpName %>VO = super.mapper.find(id, joinTables);
-        return <%= tableHumpName %>VO;
+        return super.mapper.find(id, joinTables);
+        <%_} else {-%>
+        return super.mapper.find(id, null);
+        <%_}-%>
     }
 
     /**
@@ -64,10 +66,40 @@ public class <%= tableFileName %>ServiceImpl extends BaseServiceImpl<<%= tableFi
     @Override
     public PageOrList<<%= tableFileName %>VO> query(<%= tableFileName %>VO <%= tableHumpName %>VO) {
         <%_ if((tableRelationMap[tableName] || []).length > 0) { -%>
-        <%= tableHumpName %>VO.setJoinTables(List.of(<%- (tableRelationMap[tableName] || []).map(item => item.tableFileName + "TableDef." + item.tableFileName + ".getTableName()").join(', ') %>));
+        <%= tableHumpName %>VO.setJoinTables(<%- (tableRelationMap[tableName] || []).map(item => item.table.toUpperCase() + ".getTableName()").join(', ') %>);
         <%_}-%>
 
-        return super.mapper.query(<%= tableHumpName %>VO, <%= tableHumpName %>VO);
+        QueryWrapper queryWrapper = new QueryWrapper();
+        <%_
+            const tmpColumns = columns.filter((column) => !column.primaryKey
+                && column.javaDataType !== 'Date' && column.dataType !== 'JSON'
+                && !['deleted', 'createdAt', 'updatedAt'].includes(column.columnHumpName));
+
+            const StringColumns = tmpColumns.filter((column) => column.javaDataType === 'String');
+            const OtherColumns = tmpColumns.filter((column) => column.javaDataType !== 'String');
+        -%>
+
+        <%_ if(StringColumns.length > 0) { -%>
+        // like
+        <%_}-%>
+        <%_
+            StringColumns
+                .forEach((column) => {
+        -%>
+        queryWrapper.and(<%= tableName.toUpperCase() %>.<%= column.columnName.toUpperCase() %>.like(<%= tableHumpName %>VO.get<%= column.columnFileName %>(), VerifyUtils::isNotEmpty));
+        <%_ }); -%>
+
+        <%_ if(OtherColumns.length > 0) { -%>
+        // equal
+        <%_}-%>
+        <%_
+            OtherColumns
+                .forEach((column) => {
+        -%>
+        queryWrapper.and(<%= tableName.toUpperCase() %>.<%= column.columnName.toUpperCase() %>.eq(<%= tableHumpName %>VO.get<%= column.columnFileName %>(), VerifyUtils::isNotEmpty));
+        <%_ }); -%>
+
+        return super.mapper.query(<%= tableHumpName %>VO, queryWrapper);
     }
 
     /**
@@ -77,7 +109,7 @@ public class <%= tableFileName %>ServiceImpl extends BaseServiceImpl<<%= tableFi
      */
     @Override
     public void update(<%= tableFileName %>VO <%= tableHumpName %>VO) {
-        super.mapper.updateById(<%= tableHumpName %>VO);
+        super.mapper.update(<%= tableHumpName %>VO);
     }
 
     /**

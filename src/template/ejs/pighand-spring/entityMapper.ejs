@@ -11,8 +11,8 @@ import org.mapstruct.Mapper;
  * @author <%= author %>
  * @createDate <%= dateTime %>
  */
- @Mapper(componentModel = "spring")
-public class <%= tableFileName %>Mapper {
+@Mapper(componentModel = "spring")
+public interface <%= tableFileName %>EntityMapper {
 
     <%= tableFileName %>VO toVo(<%= tableFileName %>Domain entity);
 

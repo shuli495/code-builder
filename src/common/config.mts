@@ -498,6 +498,9 @@ export interface ColumnInfo {
     /** 列名 驼峰格式 */
     columnHumpName: string;
 
+    /** 列名 首字母大写驼峰格式 */
+    columnFileName: string;
+
     /** 是否允许为空 */
     isNullable: boolean;
 
@@ -551,8 +554,12 @@ export interface tableRelationMap {
         tableHumpName;
         // 主表，关联字段
         mainKey: string;
+        // 首字母大写驼峰
+        mainKeyFileName: string;
         // 关联表，关联字段
         relationKey: string;
+        // 首字母大写驼峰
+        relationKeyFileName: string;
         // 对应关系
         relation: '11' | '1n' | 'n1' | 'nn';
         // 关联关系

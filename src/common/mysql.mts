@@ -89,7 +89,7 @@ const getDataType = (columnType: string, dataType: string) => {
         javaDataType = 'Double';
         jsDataType = 'number';
         isNumber = true;
-    } else if (dataType === 'numeric' || dataType === 'bigDecimal') {
+    } else if (dataType === 'numeric' || dataType === 'bigDecimal' || dataType === 'decimal') {
         javaDataType = 'BigDecimal';
         jsDataType = 'number';
         isNumber = true;
@@ -112,7 +112,7 @@ const getDataType = (columnType: string, dataType: string) => {
         javaDataType = 'byte[]';
         jsDataType = 'byte';
     } else if (dataType === 'json') {
-        javaDataType = 'JSON';
+        javaDataType = 'List<String>';
         jsDataType = 'object';
     }
 
@@ -914,6 +914,7 @@ const getTableColumn = async (connection: any, database: string, tableNames: Arr
             ...item,
             ...languageDataType,
             columnHumpName: hump(columnName),
+            columnFileName: file(columnName),
             primaryKey: columnKey === 'PRI', // 主键
             autoIncrement: extra === 'auto_increment', // 自增
             dataType: dataType.toString().toUpperCase(),
@@ -952,7 +953,9 @@ const getTableRelation = async (connection: any, database: string) => {
                 tableFileName: file(table_b),
                 tableHumpName: hump(table_b),
                 mainKey: table_a_key,
+                mainKeyFileName: file(table_a_key),
                 relationKey: table_b_key,
+                relationKeyFileName: file(table_b_key),
                 relation,
                 join,
                 columns: tableBColumns,
@@ -963,7 +966,9 @@ const getTableRelation = async (connection: any, database: string) => {
                 tableFileName: file(table_a),
                 tableHumpName: hump(table_a),
                 mainKey: table_b_key,
+                mainKeyFileName: file(table_b_key),
                 relationKey: table_a_key,
+                relationKeyFileName: file(table_a_key),
                 relation: relation.split('').reverse().join('') as any,
                 join,
                 columns: tableAColumns,

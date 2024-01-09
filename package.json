@@ -1,6 +1,6 @@
 {
     "name": "code-file-builder",
-    "version": "2.3.0",
+    "version": "2.3.1",
     "description": "根据模板自动生成代码",
     "exports": "./index.js",
     "type": "module",
