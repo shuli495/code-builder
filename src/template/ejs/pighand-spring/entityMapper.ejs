@@ -4,6 +4,8 @@ import com.pighand.user.domain.<%= tableFileName %>Domain;
 import com.pighand.user.domain.<%= tableFileName %>VO;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 
 /**
  * <%= tableComment %>
@@ -17,4 +19,8 @@ public interface <%= tableFileName %>EntityMapper {
     <%= tableFileName %>VO toVo(<%= tableFileName %>Domain entity);
 
     <%= tableFileName %>Domain toDomain(<%= tableFileName %>VO vo);
+
+    List<<%= tableFileName %>VO> toVoList(List<<%= tableFileName %>Domain> entity);
+
+    List<<%= tableFileName %>Domain> toDomainList(List<<%= tableFileName %>VO> vo);
 }
