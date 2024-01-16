@@ -63,17 +63,6 @@ public class <%= tableFileName %>Controller extends BaseController<<%= tableFile
     public Result update(@PathVariable(name = "id") Long id, @RequestBody <%= tableFileName %>VO <%= tableHumpName %>VO) {
         <%= tableHumpName %>VO.setId(id);
 
-        <%_
-            const tmpColumns = columns.filter((column) => column.primaryKey
-                || ['password', 'deleted', 'creatorId', 'createdAt', 'updatedAt'].includes(column.columnHumpName));
-        -%>
-        <%_ if(tmpColumns.length > 0) { -%>
-        // Prohibit modifying fields
-        <%_}-%>
-        <%_ tmpColumns.forEach((column) => { -%>
-        <%= tableHumpName %>VO.set<%= column.columnFileName %>(null);
-        <%_ }); -%>
-
         super.service.update(<%= tableHumpName %>VO);
 
         return new Result();

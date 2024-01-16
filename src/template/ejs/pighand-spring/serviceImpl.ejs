@@ -7,6 +7,7 @@ import <%= javaPackage %>.service.<%= tableFileName %>Service;
 import <%= javaPackage %>.vo.<%= tableFileName %>VO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.util.VerifyUtils;
 import com.pighand.framework.spring.page.PageType;
 import org.springframework.stereotype.Service;
 
@@ -109,7 +110,23 @@ public class <%= tableFileName %>ServiceImpl extends BaseServiceImpl<<%= tableFi
      */
     @Override
     public void update(<%= tableFileName %>VO <%= tableHumpName %>VO) {
-        super.mapper.update(<%= tableHumpName %>VO);
+        UpdateChain updateChain = this.updateChain().where(<%= table.toUpperCase() %>.ID.eq(<%= tableHumpName %>VO.getId()));
+        boolean needUpdate = false;
+
+        <%_
+            const tmpColumns = columns.filter((column) => column.primaryKey
+                || ['password', 'deleted', 'creatorId', 'createdAt', 'updatedAt'].includes(column.columnHumpName));
+        -%>
+        <%_ tmpColumns.forEach((column) => { -%>
+            if (VerifyUtils.isNotEmpty(<%= tableHumpName %>VO.get<%= column.columnFileName %>())) {
+                needUpdate = true;
+                updateChain.set(<%= table.toUpperCase() %>.<%= column.columnName.toUpperCase() %>, <%= tableHumpName %>VO.get<%= column.columnFileName %>());
+            }
+        <%_ }); -%>
+
+        if (needUpdate) {
+            updateChain.update();
+        }
     }
 
     /**
