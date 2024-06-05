@@ -12,7 +12,7 @@ import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.field.ResponseField;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 <%= columns.filter(item => item.dataType == 'JSON').length > 0 ? "import com.pighand.framework.spring.api.springdoc.dataType.EmptyObject;" : "" %>
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -31,7 +31,7 @@ import java.io.Serializable;
  */
 @Table(value = "<%= tableName %>")
 @Data
-public class <%= tableFileName %>Domain extends BaseDomain implements Serializable {
+public class <%= tableFileName %>Domain extends BaseDomainRecord<<%= tableFileName %>Domain> implements Serializable {
 <%_
     columns.forEach((column) => {
 -%>

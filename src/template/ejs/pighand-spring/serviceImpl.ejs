@@ -72,12 +72,12 @@ public class <%= tableFileName %>ServiceImpl extends BaseServiceImpl<<%= tableFi
 
         QueryWrapper queryWrapper = new QueryWrapper();
         <%_
-            const tmpColumns = columns.filter((column) => !column.primaryKey
+            const queryTmpColumns = columns.filter((column) => !column.primaryKey
                 && column.javaDataType !== 'Date' && column.dataType !== 'JSON'
                 && !['deleted', 'createdAt', 'updatedAt'].includes(column.columnHumpName));
 
-            const StringColumns = tmpColumns.filter((column) => column.javaDataType === 'String');
-            const OtherColumns = tmpColumns.filter((column) => column.javaDataType !== 'String');
+            const StringColumns = queryTmpColumns.filter((column) => column.javaDataType === 'String');
+            const OtherColumns = queryTmpColumns.filter((column) => column.javaDataType !== 'String');
         -%>
 
         <%_ if(StringColumns.length > 0) { -%>
@@ -110,17 +110,17 @@ public class <%= tableFileName %>ServiceImpl extends BaseServiceImpl<<%= tableFi
      */
     @Override
     public void update(<%= tableFileName %>VO <%= tableHumpName %>VO) {
-        UpdateChain updateChain = this.updateChain().where(<%= table.toUpperCase() %>.ID.eq(<%= tableHumpName %>VO.getId()));
+        UpdateChain updateChain = this.updateChain().where(<%= tableName.toUpperCase() %>.ID.eq(<%= tableHumpName %>VO.getId()));
         boolean needUpdate = false;
 
         <%_
-            const tmpColumns = columns.filter((column) => column.primaryKey
+            const updateTmpColumns = columns.filter((column) => column.primaryKey
                 || ['password', 'deleted', 'creatorId', 'createdAt', 'updatedAt'].includes(column.columnHumpName));
         -%>
-        <%_ tmpColumns.forEach((column) => { -%>
+        <%_ updateTmpColumns.forEach((column) => { -%>
             if (VerifyUtils.isNotEmpty(<%= tableHumpName %>VO.get<%= column.columnFileName %>())) {
                 needUpdate = true;
-                updateChain.set(<%= table.toUpperCase() %>.<%= column.columnName.toUpperCase() %>, <%= tableHumpName %>VO.get<%= column.columnFileName %>());
+                updateChain.set(<%= tableName.toUpperCase() %>.<%= column.columnName.toUpperCase() %>, <%= tableHumpName %>VO.get<%= column.columnFileName %>());
             }
         <%_ }); -%>
 

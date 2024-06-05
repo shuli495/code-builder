@@ -4,11 +4,17 @@ import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.framework.spring.base.BaseMapper;
 import <%= javaPackage %>.domain.<%= tableFileName %>Domain;
 import <%= javaPackage %>.vo.<%= tableFileName %>VO;
+import com.pighand.framework.spring.util.BeanUtil;
 import org.apache.ibatis.annotations.Mapper;
 import com.pighand.framework.spring.page.PageOrList;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import <%= javaPackage %>.table.<%= tableFileName %>TableDef.<%= tableName.toUpperCase() %>;
 
@@ -32,12 +38,12 @@ public interface <%= tableFileName %>Mapper extends BaseMapper<<%= tableFileName
      *
      * @return
      */
-    default QueryWrapper relationOne(List<String> joinTables, QueryWrapper queryWrapper) {
+    default QueryWrapper relationOne(Set<String> joinTables, QueryWrapper queryWrapper) {
         if (queryWrapper == null) {
             queryWrapper = QueryWrapper.create();
         }
 
-        if (joinTables == null) {
+        if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
         }
 
@@ -46,9 +52,12 @@ public interface <%= tableFileName %>Mapper extends BaseMapper<<%= tableFileName
             .filter((item) => item.relation === '11' || item.relation === 'n1')
             .forEach((relation) => {
         -%>
+        // <%= relation.table.toUpperCase() %>
         if (joinTables.contains(<%= relation.table.toUpperCase() %>.getTableName())) {
             queryWrapper.leftJoin(<%= relation.table.toUpperCase() %>)
                 .on(<%= relation.table.toUpperCase() %>.<%= relation.relationKey.toUpperCase() %>.eq(<%= tableName.toUpperCase() %>.<%= relation.mainKey.toUpperCase() %>));
+
+            joinTables.remove(<%= relation.table.toUpperCase() %>.getTableName());
         }
 
         <%_});-%>
@@ -60,44 +69,56 @@ public interface <%= tableFileName %>Mapper extends BaseMapper<<%= tableFileName
      *
      * @return
      */
-     default Consumer<FieldQueryBuilder<<%= tableFileName %>VO>>[] relationMany(List<String> joinTables) {
-        if (joinTables == null) {
-            return null;
+    default void relationMany(Set<String> joinTables, Object result) {
+        if (joinTables == null || joinTables.isEmpty()) {
+            return;
+        }
+
+        boolean isList = result instanceof List;
+
+        List<Function<<%= tableFileName %>VO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
+        List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
+        List<BiConsumer<<%= tableFileName %>VO, List>> subResultSetter = new ArrayList<>(joinTables.size());
+
+        List<Function<Set<Long>, List>> subTableQueriesList = null;
+        List<Function<Long, List>> subTableQueriesSingle = null;
+        if (isList) {
+            subTableQueriesList = new ArrayList<>(joinTables.size());
+        } else {
+            subTableQueriesSingle = new ArrayList<>(joinTables.size());
         }
 
         <%_
             const tmpTableRelations = (tableRelationMap[tableName] || [])
                 .filter((item) => item.relation === 'nn' || item.relation === '1n')
         -%>
-
         <%_ tmpTableRelations.forEach((relation) => { -%>
-        boolean has<%= relation.tableFileName %> = joinTables.contains(<%= relation.table.toUpperCase() %>.getTableName());
-        <%_});-%>
+        // <%= relation.table.toUpperCase() %>
+        if (joinTables.contains(<%= relation.table.toUpperCase() %>.getTableName())) {
+            mainIdGetters.add(<%= tableFileName %>VO::get<%= relation.mainKeyFileName %>);
 
+            if (subTableQueriesList != null) {
+                subTableQueriesList.add(
+                    ids -> new <%= relation.tableFileName %>Domain().select(<%= relation.table.toUpperCase() %>.DEFAULT_COLUMNS).where(<%= relation.table.toUpperCase() %>.<%= relation.relationKey.toUpperCase() %>.in(ids))
+                        .listAs(<%= relation.tableFileName %>VO.class));
+            } else {
+                subTableQueriesSingle.add(
+                    id -> new <%= relation.tableFileName %>Domain().select(<%= relation.table.toUpperCase() %>.DEFAULT_COLUMNS).where(<%= relation.table.toUpperCase() %>.<%= relation.relationKey.toUpperCase() %>.eq(id))
+                        .listAs(<%= relation.tableFileName %>VO.class));
+            }
 
-        int length = 0;
-
-        <%_ tmpTableRelations.forEach((relation) => { -%>
-        if (has<%= relation.tableFileName %>) {
-            length++;
+            subTableIdGetter.add(obj -> ((<%= relation.tableFileName %>VO)obj).get<%= relation.relationKeyFileName %>());
+            subResultSetter.add((vo, list) -> vo.set<%= relation.tableFileName %>((List<<%= relation.tableFileName %>VO>)list));
         }
+
         <%_});-%>
 
-        Consumer<FieldQueryBuilder<<%= tableFileName %>VO>>[] fieldQueryBuilders = new Consumer[length];
-
-        int nowIndex = 0;
-        <%_ tmpTableRelations.forEach((relation) => { -%>
-        if (hasGoodsSku) {
-            Consumer<FieldQueryBuilder<<%= tableFileName %>VO>> consumer = (builder) -> {
-                builder.field(<%= tableFileName %>VO::get<%= relation.tableFileName %>).queryWrapper(<%= tableHumpName %> -> QueryWrapper.create().from(<%= relation.table.toUpperCase() %>)
-                    .where(<%= relation.table.toUpperCase() %>.<%= relation.relationKey.toUpperCase() %>.eq(<%= tableHumpName %>.get<%= relation.mainKeyFileName %>())));
-            };
-            fieldQueryBuilders[nowIndex] = consumer;
-            nowIndex++;
+        if (result instanceof List) {
+            BeanUtil.queryWithRelatedData((List)result, mainIdGetters, subTableQueriesList, subTableIdGetter,
+                subResultSetter);
+        } else {
+            BeanUtil.queryWithRelatedData((<%= tableFileName %>VO)result, mainIdGetters, subTableQueriesSingle, subResultSetter);
         }
-        <%_});-%>
-
-        return fieldQueryBuilders;
     }
 
     /**
@@ -107,11 +128,15 @@ public interface <%= tableFileName %>Mapper extends BaseMapper<<%= tableFileName
      * @param joinTables 关联表
      * @return
      */
-    default <%= tableFileName %>VO find(Long id, List<String> joinTables) {
-        QueryWrapper queryWrapper = this.relationOne(joinTables, null).where(<%= tableName.toUpperCase() %>.ID.eq(id));
-        Consumer<FieldQueryBuilder<<%= tableFileName %>VO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default <%= tableFileName %>VO find(Long id, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(queryWrapper, <%= tableFileName %>VO.class, relationManyBuilders);
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(<%= tableName.toUpperCase() %>.ID.eq(id));
+
+        <%= tableFileName %>VO result = this.selectOneByQueryAs(queryWrapper, <%= tableFileName %>VO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -121,11 +146,15 @@ public interface <%= tableFileName %>Mapper extends BaseMapper<<%= tableFileName
      * @param joinTables 关联表
      * @return
      */
-    default <%= tableFileName %>VO find(QueryWrapper queryWrapper, List<String> joinTables) {
-        QueryWrapper finalQueryWrapper = this.relationOne(joinTables, queryWrapper);
-        Consumer<FieldQueryBuilder<<%= tableFileName %>VO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default <%= tableFileName %>VO find(QueryWrapper queryWrapper, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(finalQueryWrapper, <%= tableFileName %>VO.class, relationManyBuilders);
+        QueryWrapper finalQueryWrapper = this.relationOne(joinTableSet, queryWrapper);
+
+        <%= tableFileName %>VO result =  this.selectOneByQueryAs(finalQueryWrapper, <%= tableFileName %>VO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -136,9 +165,10 @@ public interface <%= tableFileName %>Mapper extends BaseMapper<<%= tableFileName
      */
     default PageOrList<<%= tableFileName %>VO> query(<%= tableFileName %>Domain <%= tableHumpName %>Domain, QueryWrapper queryWrapper) {
         QueryWrapper finalQueryWrapper = this.relationOne(<%= tableHumpName %>Domain.getJoinTables(), queryWrapper);
-        Consumer<FieldQueryBuilder<<%= tableFileName %>VO>>[] relationManyBuilders =
-            this.relationMany(<%= tableHumpName %>Domain.getJoinTables());
 
-        return this.page(<%= tableHumpName %>Domain, finalQueryWrapper, <%= tableFileName %>VO.class, relationManyBuilders);
+        PageOrList<<%= tableFileName %>VO> result = this.page(<%= tableHumpName %>Domain, finalQueryWrapper, <%= tableFileName %>VO.class);
+        this.relationMany(<%= tableHumpName %>Domain.getJoinTables(), result.getRecords());
+
+        return result;
     }
 }
